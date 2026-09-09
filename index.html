@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="description" content="Build instruction for ACTA Football's GoHighLevel automations specialist.">
+<title>ACTA Pipeline Automation Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@500;600;700&family=Nunito:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#FBFCFD; --surface:#FFFFFF; --surface-2:#F2F6FA;
+    --line:#DCE3EB; --line-strong:#C3CEDB;
+    --ink:#101C2E; --muted:#56657A;
+    --navy:#16294A; --cyan:#0B7F9C; --cyan-bright:#1FB6D8;
+    --red:#C0303B; --red-bg:#FDF2F3;
+    --amber:#9A6100; --amber-bg:#FDF7EC;
+    --green:#1F7A52; --green-bg:#F0F8F4;
+    --mono-bg:#EEF3F8;
+    --display:"Fira Sans Extra Condensed","Helvetica Neue",Arial,sans-serif;
+    --body:"Nunito","Segoe UI",system-ui,sans-serif;
+    --mono:"IBM Plex Mono","SFMono-Regular",Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B131D; --surface:#111C28; --surface-2:#16232F;
+      --line:#233240; --line-strong:#33475A;
+      --ink:#E7EEF6; --muted:#93A4B7;
+      --navy:#9FC4E8; --cyan:#4FCDE9; --cyan-bright:#4FCDE9;
+      --red:#FF868D; --red-bg:#2A171A;
+      --amber:#E4A94E; --amber-bg:#241D12;
+      --green:#5FCF9B; --green-bg:#132419;
+      --mono-bg:#18242F;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B131D; --surface:#111C28; --surface-2:#16232F;
+    --line:#233240; --line-strong:#33475A;
+    --ink:#E7EEF6; --muted:#93A4B7;
+    --navy:#9FC4E8; --cyan:#4FCDE9; --cyan-bright:#4FCDE9;
+    --red:#FF868D; --red-bg:#2A171A;
+    --amber:#E4A94E; --amber-bg:#241D12;
+    --green:#5FCF9B; --green-bg:#132419;
+    --mono-bg:#18242F;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--body); font-size:16.5px; line-height:1.62;
+    margin:0; padding:0 20px 96px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto}
+  .prose{max-width:70ch}
+
+  header.mast{border-bottom:3px solid var(--ink);padding:56px 0 18px;margin-bottom:34px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin:0 0 14px}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(38px,7vw,60px);line-height:1.02;letter-spacing:-.005em;margin:0 0 12px;text-wrap:balance}
+  .standfirst{font-size:17px;color:var(--muted);margin:0;max-width:62ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .meta b{color:var(--ink);font-weight:500}
+
+  .part{display:flex;align-items:baseline;gap:14px;border-top:2px solid var(--ink);padding-top:14px;margin:72px 0 8px}
+  .part-n{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);white-space:nowrap}
+  h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4.2vw,36px);line-height:1.1;margin:0;letter-spacing:.005em;text-wrap:balance}
+  h3{font-family:var(--display);font-weight:600;font-size:22px;line-height:1.2;margin:38px 0 10px;letter-spacing:.01em}
+  p{margin:0 0 14px;max-width:70ch}
+  ul,ol{margin:0 0 16px;padding-left:22px;max-width:70ch}
+  li{margin:0 0 7px}
+  section{margin:52px 0 0}
+
+  code{font-family:var(--mono);font-size:.86em;background:var(--mono-bg);color:var(--ink);padding:.12em .42em;border-radius:3px;border:1px solid var(--line);white-space:nowrap}
+  .id{font-family:var(--mono);font-size:.78em;color:var(--muted);white-space:nowrap}
+
+  .scroll{overflow-x:auto;margin:18px 0 22px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:var(--surface-2);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  td code{white-space:normal}
+
+  .rule{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--cyan-bright);border-radius:5px;padding:16px 18px;margin:0 0 14px}
+  .rule .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px}
+  .rule .row{margin-bottom:11px}
+  .rule .row:last-child{margin-bottom:0}
+
+  .flag,.note,.ok{border-radius:5px;padding:15px 18px;margin:20px 0}
+  .flag{background:var(--red-bg);border:1px solid var(--red)}
+  .note{background:var(--amber-bg);border:1px solid var(--amber)}
+  .ok{background:var(--green-bg);border:1px solid var(--green)}
+  .flag .lab,.note .lab,.ok .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;display:block;margin-bottom:6px}
+  .flag .lab{color:var(--red)} .note .lab{color:var(--amber)} .ok .lab{color:var(--green)}
+  .flag p:last-child,.note p:last-child,.ok p:last-child{margin-bottom:0}
+
+  .task{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--red);border:1px solid var(--red);border-radius:3px;padding:1px 5px;margin-left:6px;white-space:nowrap}
+  .conf{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);border:1px solid var(--green);border-radius:3px;padding:1px 5px;margin-left:6px;white-space:nowrap}
+
+  footer{margin-top:76px;padding-top:20px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--muted)}
+  a{color:var(--cyan)}
+  a:focus-visible{outline:2px solid var(--cyan-bright);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">ACTA Football · GoHighLevel</p>
+  <h1>Pipeline &amp; Booking Automation Spec</h1>
+  <p class="standfirst">Build instruction for the GoHighLevel automations specialist. Structural cleanup first, then the rules governing every booking, rebooking and reschedule, then how the pipelines stay in sync — and one open question about the current architecture.</p>
+  <div class="meta">
+    <span>Prepared for <b>ACTA Football</b></span>
+    <span>Version <b>1.3</b></span>
+    <span>Stage names <b>verified against CRM</b></span>
+  </div>
+</header>
+
+<section class="prose">
+  <h3 style="margin-top:0">How to read this</h3>
+  <p>Anything in <code>this typeface</code> is a literal value inside the CRM — a pipeline, stage, or calendar. Type it exactly as written. All stage names here were read from the live pipeline settings on 9 September 2026.</p>
+  <p><span class="task">action</span> marks something to change, delete or merge. <span class="conf">confirm</span> marks something to check before building.</p>
+  <p><strong>PEM</strong> throughout means the <code>Player Evaluation Meeting</code> pipeline.</p>
+
+  <div class="ok">
+    <span class="lab">Your first decision — make it before you build anything</span>
+    <p>The existing automations live in a folder called <strong>New Sales Architecture 2026</strong>. You have a free hand with them.</p>
+    <p><strong>Repair or rebuild.</strong> If you can get the pre-call engagement process behaving correctly by fixing the workflows already there, do that. If you judge it faster or more robust to switch that folder off entirely and build the whole process fresh against this spec, do that instead — ACTA would rather have it rebuilt and right than patched and fragile.</p>
+    <p>Make the call early: look at what exists, read this document, then decide. <strong>The measure is that it works, and works immediately.</strong> Nothing here is attached to the current implementation.</p>
+  </div>
+</section>
+
+<section>
+  <h2 style="border-top:2px solid var(--line);padding-top:16px">The system as it stands</h2>
+
+  <p class="prose">ACTA runs a two-call sales process with a follow-up call after the second. The first call is the Player Development Session (PDS), the second is the Player Evaluation Meeting (PEM) — the closing call.</p>
+
+  <h3>Three pipelines</h3>
+  <p><code>PDS Pipeline</code> and <code>PDS Confirmation &amp; Qualification</code> are the same pipeline twice over — the second carries extra stages tracking pre-call engagement. A prospect booking an initial meeting lands in <strong>both</strong>. <code>Player Evaluation Meeting</code> is the closing call and comes later.</p>
+
+  <div class="scroll">
+  <table>
+    <thead><tr><th>PDS Confirmation &amp; Qualification</th><th>PDS Pipeline</th><th>Player Evaluation Meeting</th></tr></thead>
+    <tbody>
+      <tr><td><code>Call booked</code></td><td><code>Call Booked</code></td><td><code>Call Booked</code></td></tr>
+      <tr><td><code>Contacted - NC</code></td><td>—</td><td>—</td></tr>
+      <tr><td><code>NC within 24 hours</code></td><td>—</td><td>—</td></tr>
+      <tr><td><code>Confirmed</code></td><td>—</td><td>—</td></tr>
+      <tr><td><code>Qualified</code></td><td>—</td><td>—</td></tr>
+      <tr><td><code>No Show</code></td><td><code>No Show</code></td><td><code>No Show</code></td></tr>
+      <tr><td><code>Cancelled</code></td><td><code>Cancelled</code></td><td><code>Cancelled</code></td></tr>
+      <tr><td><code>Pending Reschedule</code></td><td><code>Pending Reschedule</code></td><td><code>Pending Reschedule</code></td></tr>
+      <tr><td><code>Rescheduled PDS Appt</code></td><td><code>Rescheduled PDS Appt</code></td><td><code>Rescheduled</code></td></tr>
+      <tr><td><code>DQ</code></td><td><code>DQ</code></td><td><code>DQ</code></td></tr>
+      <tr><td><code>Qualified - Player Evaluation Not Booked</code></td><td><code>Qualified - Player Evaluation Not Booked</code></td><td>—</td></tr>
+      <tr><td><code>Qualified - Player Evaluation Booked</code></td><td><code>Qualified - Player Evaluation Booked</code></td><td>—</td></tr>
+      <tr><td>—</td><td><code>Follow Up - Player Evaluation Call Booked</code> <span class="task">delete</span></td><td>—</td></tr>
+      <tr><td>—</td><td>—</td><td><code>Call Completed - Not Closed</code></td></tr>
+      <tr><td>—</td><td>—</td><td><code>Call Completed - Follow Up Booked</code></td></tr>
+      <tr><td><code>Deposit</code></td><td><code>Deposit</code></td><td><code>Deposit</code></td></tr>
+      <tr><td><code>Won</code></td><td><code>Won</code></td><td><code>Won</code></td></tr>
+      <tr><td><code>Lost</code></td><td><code>Lost</code></td><td><code>Lost</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Five calendars</h3>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Calendar</th><th>ID</th><th>Feeds</th></tr></thead>
+    <tbody>
+      <tr><td><code>ACTA Player Development Session</code></td><td class="id">AVnCdHE5MgQpF4q4t6Xl</td><td>Both PDS pipelines</td></tr>
+      <tr><td><code>ACTA Player Development Session</code></td><td class="id">xCH2v6k2AKGUQb12NXuo</td><td>Both PDS pipelines</td></tr>
+      <tr><td><code>ACTA Player Evaluation Meeting</code></td><td class="id">K7EtYcZb3wwKtYM72b5e</td><td>PEM pipeline + stage change in the PDS pair</td></tr>
+      <tr><td><code>Follow Up - ACTA Player Evaluation Meeting</code></td><td class="id">hHD2MGGb5jMwouPNxEE4</td><td>PEM pipeline — follow-up bookings</td></tr>
+      <tr><td><code>ACTA Onboarding Meeting</code></td><td class="id">lXE04vrbONLxGRFiIs07</td><td>Currently an onboarding pipeline <span class="task">repoint</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The two PDS calendars are interchangeable for automation purposes. Every rule referencing "a PDS calendar" applies to either.</p>
+</section>
+
+<div class="part">
+  <span class="part-n">Part One</span>
+  <h2>Structural cleanup</h2>
+</div>
+
+<section>
+  <p class="prose">Two pieces of structure are wrong and should be corrected before the rules in Part Two are built on top of them.</p>
+
+  <h3>1.1 Remove the onboarding pipeline</h3>
+  <div class="rule">
+    <div class="row"><span class="lab">Problem</span>Booking through the <code>ACTA Onboarding Meeting</code> calendar <span class="id">lXE04vrbONLxGRFiIs07</span> creates an opportunity in a separate onboarding pipeline. Prospects should never enter that pipeline.</div>
+    <div class="row"><span class="lab">Do</span>Delete the onboarding pipeline. Remove any workflow that creates opportunities in it.</div>
+    <div class="row"><span class="lab">Then</span>A booking on the <code>ACTA Onboarding Meeting</code> calendar <span class="id">lXE04vrbONLxGRFiIs07</span> moves the opportunity to <code>Call Completed - Follow Up Booked</code> in the <code>Player Evaluation Meeting</code> pipeline — the same outcome as booking through the <code>Follow Up - ACTA Player Evaluation Meeting</code> calendar <span class="id">hHD2MGGb5jMwouPNxEE4</span>.</div>
+    <div class="row"><span class="lab">Note</span>The <code>ACTA Onboarding Meeting</code> calendar <span class="id">lXE04vrbONLxGRFiIs07</span> itself stays live and in use. It is the onboarding pipeline and its opportunity-creating workflows that go.</div>
+  </div>
+
+  <h3>1.2 Merge the duplicate follow-up stage</h3>
+  <div class="rule">
+    <div class="row"><span class="lab">Problem</span>In the <code>PDS Pipeline</code>, <code>Follow Up - Player Evaluation Call Booked</code> duplicates <code>Qualified - Player Evaluation Booked</code>. It has no counterpart in the Confirmation &amp; Qualification pipeline, so the two pipelines cannot mirror each other cleanly.</div>
+    <div class="row"><span class="lab">Do, in order</span>
+      1. Move every opportunity currently in <code>Follow Up - Player Evaluation Call Booked</code> into <code>Qualified - Player Evaluation Booked</code>.<br>
+      2. Repoint every workflow that writes to the follow-up stage so it writes to <code>Qualified - Player Evaluation Booked</code> instead.<br>
+      3. Delete <code>Follow Up - Player Evaluation Call Booked</code>.
+    </div>
+    <div class="row"><span class="lab">Order matters</span>Repoint the workflows before deleting the stage, or a live automation will fail mid-flight.</div>
+  </div>
+</section>
+
+<div class="part">
+  <span class="part-n">Part Two</span>
+  <h2>Booking, rebooking and rescheduling</h2>
+</div>
+
+<section>
+  <p class="prose">The requirement in one line: <strong>a booking automation must fire on a genuine new booking and must not fire again when the same person reschedules or moves stage.</strong></p>
+
+  <div class="flag">
+    <span class="lab">This is broken today — it is the problem you are being brought in to fix</span>
+    <p><strong>What is happening now, and is wrong:</strong> pre-call engagement email sequences are firing on reschedules and on stage changes. They should fire on a genuine <em>new</em> booking and on nothing else. A prospect who simply moves an existing appointment is currently misjudged as a brand-new booking and is sent the new-booking sequence a second time. That is a live fault hitting real prospects. It is not the intended design and no part of it should be preserved.</p>
+    <p><strong>Something in the account is causing that misjudgement, and finding it is part of the job.</strong> One or more automations are treating an existing prospect as new and triggering the new-booking workflow. ACTA's suspicion — unconfirmed, so verify rather than assume — is that the pipeline-syncing automations are implicated: a sync writes a stage change, and that stage change can look like a fresh booking event to a downstream trigger. Work through everything in <strong>New Sales Architecture 2026</strong>, establish what is actually firing and why, and switch off whatever is producing the fault.</p>
+    <p>You are not obliged to preserve any of it. Turning the whole folder off and rebuilding against this spec is an acceptable outcome if that is the faster route to correct behaviour.</p>
+  </div>
+
+  <h3>2.1 Every way into the PDS pipeline</h3>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>#</th><th>Route</th><th>Booking or rebooking</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>The prospect books themselves through the booking link for either <code>ACTA Player Development Session</code> calendar — <span class="id">AVnCdHE5MgQpF4q4t6Xl</span> or <span class="id">xCH2v6k2AKGUQb12NXuo</span></td><td>Either</td></tr>
+      <tr><td>2</td><td>The prospect reschedules from the Google calendar event itself, using the reschedule link on the invitation rather than going back to a booking page</td><td>Rebooking</td></tr>
+      <tr><td>3</td><td>A sales rep books on the prospect's behalf: opens the contact record in the CRM, goes to the Appointments section, and books against either <code>ACTA Player Development Session</code> calendar — <span class="id">AVnCdHE5MgQpF4q4t6Xl</span> or <span class="id">xCH2v6k2AKGUQb12NXuo</span></td><td>Either</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>2.2 The distinction everything hangs on</h3>
+  <div class="rule">
+    <div class="row"><span class="lab">Test, on every booking event</span>Does this contact already have an opportunity in the <code>PDS Pipeline</code>?</div>
+    <div class="row"><span class="lab">No — new opportunity</span>Create the opportunity and enrol them in the <strong>new-booking</strong> pre-call engagement sequence.</div>
+    <div class="row"><span class="lab">Yes — existing opportunity</span>Do <strong>not</strong> re-enrol them in the new-booking sequence. Enrol them in the <strong>returning / rescheduled</strong> sequence instead.</div>
+  </div>
+  <p>The question is "has this person got, or ever had, a call booked with us" — expressed concretely as an existing opportunity in the PDS Pipeline. It is not about whether the appointment record is new.</p>
+  <p>Whether the two sequences sit in one automation with a branch or in two separate automations is the specialist's call. What is not optional is that the paths are distinct and driven by different triggers.</p>
+
+  <h3>2.3 The same rule at every later stage</h3>
+  <p>The first-versus-repeat split applies identically to the closing call and to follow-ups. The copy is largely the same in each pair; the difference is a variation acknowledging the reschedule.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Situation</th><th>Sequence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>First PDS booking.</strong> No opportunity for this contact exists in the <code>PDS Pipeline</code>, and they have never had a PDS meeting or a call booked with ACTA.</td><td>New-booking PDS sequence</td></tr>
+      <tr><td><strong>Any PDS rebooking, by any route.</strong> An opportunity for this contact already exists in the <code>PDS Pipeline</code>, or they have already had a PDS meeting or a call booked with ACTA. This holds whatever stage they are currently sitting in — including <code>No Show</code>, <code>Cancelled</code>, <code>Pending Reschedule</code> or <code>Rescheduled PDS Appt</code> — and whichever of the three routes in 2.1 they used.</td><td>Returning PDS sequence</td></tr>
+      <tr><td><strong>First PEM booking.</strong> Original opportunity, no prior Player Evaluation Meeting booked.</td><td>PEM first-booking sequence</td></tr>
+      <tr><td><strong>Any PEM rebooking, by any route.</strong> A Player Evaluation Meeting has already been booked for this contact at some point — rescheduled, cancelled, no-showed, or otherwise.</td><td>PEM rebooking sequence</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>2.4 What a PEM booking does</h3>
+  <div class="rule">
+    <div class="row"><span class="lab">Trigger</span>A booking on <code>ACTA Player Evaluation Meeting</code> <span class="id">K7EtYcZb3wwKtYM72b5e</span>.</div>
+    <div class="row"><span class="lab">PEM pipeline</span>Add the opportunity at <code>Call Booked</code>.</div>
+    <div class="row"><span class="lab">PDS Pipeline</span>Move to <code>Qualified - Player Evaluation Booked</code>.</div>
+    <div class="row"><span class="lab">PDS Confirmation &amp; Qualification</span>Move to the mirroring <code>Qualified - Player Evaluation Booked</code>.</div>
+    <div class="row"><span class="lab">Source of truth</span>The booking event drives all three. Not a card moved by hand.</div>
+  </div>
+
+  <h3>2.5 Follow-up bookings</h3>
+  <p>A follow-up is booked after the Player Evaluation Meeting has happened. Three routes, one outcome.</p>
+  <div class="rule">
+    <div class="row"><span class="lab">Route 1 — booking link, used live on the call</span>
+      The rep sends the prospect the booking link for the <code>Follow Up - ACTA Player Evaluation Meeting</code> calendar <span class="id">hHD2MGGb5jMwouPNxEE4</span> while still on the Player Evaluation Meeting, and the prospect books their slot there and then.
+    </div>
+    <div class="row"><span class="lab">Route 2 — booked by a rep inside the CRM</span>
+      The rep opens the prospect's contact record in the CRM, goes to the Appointments section, and books the appointment against the <code>Follow Up - ACTA Player Evaluation Meeting</code> calendar <span class="id">hHD2MGGb5jMwouPNxEE4</span>.
+    </div>
+    <div class="row"><span class="lab">Route 3 — the onboarding booking link</span>
+      The prospect books through the booking link for the <code>ACTA Onboarding Meeting</code> calendar <span class="id">lXE04vrbONLxGRFiIs07</span>. Once the work in 1.1 is done this produces exactly the same outcome as routes 1 and 2, rather than creating an opportunity in the onboarding pipeline as it does today.
+    </div>
+    <div class="row"><span class="lab">Outcome — identical for all three routes</span>
+      The opportunity moves to <code>Call Completed - Follow Up Booked</code> in the <code>Player Evaluation Meeting</code> pipeline.
+    </div>
+  </div>
+</section>
+
+<div class="part">
+  <span class="part-n">Part Three</span>
+  <h2>Keeping the pipelines in sync</h2>
+</div>
+
+<section>
+  <p class="prose">One prospect exists as an opportunity in more than one pipeline, so a stage change in one has to propagate. These rules come from ACTA's existing sync spec, checked here against the live stage lists.</p>
+
+  <div class="ok">
+    <span class="lab">The governing principle — read this before the tables</span>
+    <p><strong>1. A stage that exists in only one pipeline has no sync bearing.</strong> Landing in it causes no stage change anywhere else. That covers every stage unique to <code>PDS Confirmation &amp; Qualification</code>, and every stage unique to the <code>Player Evaluation Meeting</code> pipeline.</p>
+    <p><strong>2. A mirrored move is unconditional — it does not depend on where the opportunity currently sits.</strong> When a sync moves an opportunity to a stage, it goes there from <em>whatever</em> stage it is in. Worked example: a Player Evaluation Meeting is booked, so the <code>PDS Pipeline</code> moves to <code>Qualified - Player Evaluation Booked</code>. The <code>PDS Confirmation &amp; Qualification</code> opportunity must move to its matching <code>Qualified - Player Evaluation Booked</code> regardless of its current stage — including straight out of <code>NC within 24 hours</code>, <code>Contacted - NC</code>, <code>Confirmed</code> or <code>Qualified</code>. Do not build preconditions or ordering assumptions into the sync; there is no required path through the stages.</p>
+  </div>
+
+  <div class="note">
+    <span class="lab">Derived from that principle — worth a sanity check with ACTA</span>
+    <p>Four live stages were never given an explicit sync rule. Applying principle 1 above: <code>Rescheduled</code>, <code>Call Completed - Not Closed</code> and <code>Call Completed - Follow Up Booked</code> exist only in the <code>Player Evaluation Meeting</code> pipeline, so they propagate nowhere. <code>Rescheduled PDS Appt</code> exists in both PDS pipelines, so it syncs bidirectionally between them like the other shared PDS stages, and does not touch PEM. This is inferred rather than separately confirmed. <span class="conf">confirm</span></p>
+  </div>
+
+  <h3>3.1 Stages that sync across all three pipelines</h3>
+  <p>A single shared status: moving into one of these in <strong>any</strong> pipeline moves the corresponding opportunities in the others to the same stage.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Stage</th><th>PDS Conf &amp; Qual</th><th>PDS Pipeline</th><th>PEM</th></tr></thead>
+    <tbody>
+      <tr><td><code>DQ</code></td><td>yes</td><td>yes</td><td>yes</td></tr>
+      <tr><td><code>Deposit</code></td><td>yes</td><td>yes</td><td>yes</td></tr>
+      <tr><td><code>Won</code></td><td>yes</td><td>yes</td><td>yes</td></tr>
+      <tr><td><code>Lost</code></td><td>yes</td><td>yes</td><td>yes</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>3.2 Stages that sync between the two PDS pipelines only</h3>
+  <p>Bidirectional. A move in either moves the other; PEM is untouched.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Stage in both pipelines</th><th>Direction</th></tr></thead>
+    <tbody>
+      <tr><td><code>Call Booked</code></td><td>Both ways</td></tr>
+      <tr><td><code>No Show</code></td><td>Both ways</td></tr>
+      <tr><td><code>Cancelled</code></td><td>Both ways</td></tr>
+      <tr><td><code>Pending Reschedule</code></td><td>Both ways</td></tr>
+      <tr><td><code>Qualified - Player Evaluation Not Booked</code></td><td>Both ways</td></tr>
+      <tr><td><code>Qualified - Player Evaluation Booked</code></td><td>Both ways</td></tr>
+      <tr><td><code>Rescheduled PDS Appt</code></td><td>Both ways <span class="conf">confirm</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>3.3 Stages that must not propagate</h3>
+  <p>Each of these exists in one pipeline only, so by principle 1 above, moving into any of them causes <strong>no</strong> stage change anywhere else.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Stage</th><th>Exists only in</th></tr></thead>
+    <tbody>
+      <tr><td><code>Contacted - NC</code></td><td>PDS Confirmation &amp; Qualification</td></tr>
+      <tr><td><code>NC within 24 hours</code></td><td>PDS Confirmation &amp; Qualification</td></tr>
+      <tr><td><code>Confirmed</code></td><td>PDS Confirmation &amp; Qualification</td></tr>
+      <tr><td><code>Qualified</code></td><td>PDS Confirmation &amp; Qualification</td></tr>
+      <tr><td><code>Rescheduled</code></td><td>Player Evaluation Meeting</td></tr>
+      <tr><td><code>Call Completed - Not Closed</code></td><td>Player Evaluation Meeting</td></tr>
+      <tr><td><code>Call Completed - Follow Up Booked</code></td><td>Player Evaluation Meeting</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Note the asymmetry this creates, and build for it: an opportunity can be sitting in one of the Confirmation &amp; Qualification-only stages when a sync arrives from elsewhere. It moves out of that stage without ceremony — see principle 2.</p>
+
+  <h3>3.4 Safeguards</h3>
+  <ol>
+    <li><strong>No infinite loops.</strong> A stage update caused by a sync workflow must not trigger an equivalent update back the other way.</li>
+    <li><strong>No duplicate writes.</strong> Do not write a stage value if the opportunity is already in that stage.</li>
+    <li><strong>The booking event is the source of truth</strong> for PEM and follow-up bookings. Manual pipeline edits do not drive the automation.</li>
+  </ol>
+</section>
+
+<div class="part">
+  <span class="part-n">Part Four</span>
+  <h2>An architecture question for you</h2>
+</div>
+
+<section class="prose">
+  <p>The automations live in an <code>automations</code> folder called <strong>New Sales Architecture 2026</strong>, containing two subfolders: <strong>PDS Pipeline</strong> and <strong>Player Evaluation Pipeline</strong>. Known workflows include:</p>
+  <ul>
+    <li><code>PDS Appointment Booked + Rescheduled</code> — carries much of the pre-call engagement content</li>
+    <li><code>Player Evaluation Appointment Booked + Reschedule</code> — the PEM equivalent</li>
+    <li><code>Player Evaluation Follow Up Appointment Booked</code></li>
+  </ul>
+  <p>Alongside these sit <strong>roughly thirty separate workflows whose only job is syncing stages between pipelines</strong> — one per combination.</p>
+  <div class="note">
+    <span class="lab">What ACTA wants from you here</span>
+    <p>Thirty workflows to maintain one behaviour looks like the wrong shape, but that is an outside view and it may be the right call in GoHighLevel. Review it and say plainly whether a smaller, more maintainable structure achieves the same result — and if so, what it looks like. If thirty is genuinely the correct approach in this platform, say that too, and it stays.</p>
+    <p>Two things worth weighing. <strong>Custom code is on the table:</strong> ACTA has previously built pipeline syncing by hand in code rather than as workflows, and that may well be the cleaner route here — a single implementation of one rule, instead of thirty copies of it drifting apart. <strong>And the sync workflows are a suspect</strong> in the misfiring described in Part Two, so whatever replaces them should be built so that a sync-driven stage change cannot be mistaken for a new booking downstream.</p>
+  </div>
+</section>
+
+<div class="part">
+  <span class="part-n">Before build</span>
+  <h2>Open items</h2>
+</div>
+
+<section class="prose">
+  <div class="note">
+    <span class="lab">Outstanding</span>
+    <p><strong>1. One inferred sync rule.</strong> The four stages that had no explicit rule are resolved in Part Three by applying ACTA's stated principle, not by separate instruction. The one worth a second look is <code>Rescheduled PDS Appt</code>, which this spec syncs bidirectionally across the two PDS pipelines because it exists in both.</p>
+    <p><strong>2. Sequence names.</strong> This spec defines which sequence fires and when. The four sequences — new-booking PDS, returning PDS, PEM first-booking, PEM rebooking — exist in the CRM but have not been named here. Match them by function when building.</p>
+    <p><strong>3. The copy itself is believed correct and already written.</strong> Part of the job is confirming that the right existing copy is attached to the right trigger, rather than writing anything new.</p>
+  </div>
+</section>
+
+<footer>
+  ACTA Football · Pipeline &amp; Booking Automation Spec · v1.3 · stage names read from the live CRM, 9 September 2026
+</footer>
+
+</div>
+</body>
+</html>
