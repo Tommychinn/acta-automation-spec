@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<meta name="description" content="Booking and customer tag cleanup brief for ACTA Football's GoHighLevel specialist.">
+<meta name="description" content="Booking tag cleanup brief for ACTA Football's GoHighLevel specialist.">
 <title>ACTA Tag Cleanup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -107,11 +107,11 @@
 
 <header class="mast">
   <p class="eyebrow">ACTA Football · GoHighLevel</p>
-  <h1>Booking &amp; Customer Tag Cleanup</h1>
-  <p class="standfirst">Replace the many inconsistent "call booked" tags with one standard set, tag every customer, then remove the old tags so nobody can apply them again. Five phases, each ending at a checkpoint where you report to Tommy and wait for approval.</p>
+  <h1>Booking Tag Cleanup</h1>
+  <p class="standfirst">Replace the many inconsistent "call booked" tags with one standard pair, then remove the old tags so nobody can apply them again. Five phases, each ending at a checkpoint where you report to Tommy and wait for approval.</p>
   <div class="meta">
     <span>Prepared for <b>ACTA Football</b></span>
-    <span>Version <b>1.0</b></span>
+    <span>Version <b>1.1</b></span>
     <span>Calendars <b>read from the live CRM, 30 Sep 2026</b></span>
   </div>
 </header>
@@ -142,14 +142,13 @@
 </div>
 
 <section class="prose">
-  <h3>The standard tags (the only ones that should exist when you finish)</h3>
+  <h3>The standard booking tags (the only booking tags that should exist when you finish)</h3>
   <div class="scroll">
   <table>
     <thead><tr><th>Tag</th><th>Means</th></tr></thead>
     <tbody>
       <tr><td><code>pds-booked</code></td><td>The contact has booked a PDS at some point.</td></tr>
       <tr><td><code>pem-booked</code></td><td>The contact has booked a PEM at some point.</td></tr>
-      <tr><td><code>acta customer</code></td><td>The contact has bought something from ACTA. This tag already exists but is not being applied.</td></tr>
     </tbody>
   </table>
   </div>
@@ -162,10 +161,9 @@
     <div class="row"><span class="lab">1 · Every booking tag gets replaced</span>Every contact carrying any old booking tag must end up with a standard booking tag. The only question is which one. Do not drop a contact because there is no appointment on record, because iClosed bookings were not all migrated.</div>
     <div class="row"><span class="lab">2 · Decide from evidence, in this order</span>(a) The contact's appointment history on the five calendars above. (b) If there is no appointment on record, the rest of the contact's history: what the old tag means, opportunity and pipeline stage, notes, conversations. (c) If it's still unclear whether the call was a closing call, use <code>pds-booked</code>.</div>
     <div class="row"><span class="lab">3 · PEM implies PDS</span>Any contact with <code>pem-booked</code> must also have <code>pds-booked</code>. This includes contacts who have <code>pem-booked</code> today.</div>
-    <div class="row"><span class="lab">4 · Every purchaser is a customer</span>Anyone who has bought anything, at any price, gets <code>acta customer</code>. Look at purchase tags, won/sold tags, won opportunities and payments. Do not create tags for individual programmes. That is a separate later job.</div>
-    <div class="row"><span class="lab">5 · Status tags: report only</span>Tags for no-show, cancelled, rescheduled, missed and attended are out of scope. List them with counts in Phase 1, and change nothing.</div>
-    <div class="row"><span class="lab">6 · Ask, don't guess</span>If you can't tell what an old tag means, ask Tommy before mapping it.</div>
-    <div class="row"><span class="lab">7 · Add first, remove later</span>Never remove or delete a tag until the replacement tags are in place and Tommy has approved in writing.</div>
+    <div class="row"><span class="lab">4 · Booking tags only</span>Only tags that mean a call was booked are in scope. Leave every other tag exactly as it is.</div>
+    <div class="row"><span class="lab">5 · Ask, don't guess</span>If you can't tell what an old tag means, ask Tommy before mapping it.</div>
+    <div class="row"><span class="lab">6 · Add first, remove later</span>Never remove or delete a tag until the replacement tags are in place and Tommy has approved in writing.</div>
   </div>
 </section>
 
@@ -181,10 +179,10 @@
 
   <h3>Phase 1 · Audit (no changes)</h3>
   <ol>
-    <li><strong>Tag inventory.</strong> List every tag in the account that indicates a booked call, a purchase or customer, or a booking status. For each one, give its contact count, what it means, and your proposed mapping: <code>pds-booked</code>, <code>pem-booked</code> + <code>pds-booked</code>, <code>acta customer</code>, status (report only), or unused (0 contacts). State the evidence behind each mapping, e.g. "91% of these contacts have a PEM-calendar appointment".</li>
+    <li><strong>Tag inventory.</strong> List every tag in the account that indicates a booked call. For each one, give its contact count, what it means, and your proposed mapping: <code>pds-booked</code>, <code>pem-booked</code> + <code>pds-booked</code>, or unused (0 contacts). State the evidence behind each mapping, e.g. "91% of these contacts have a PEM-calendar appointment".</li>
     <li><strong>Contact mapping.</strong> For each contact carrying an old tag, record which standard tag(s) they will receive and which rule decided it (2a, 2b or 2c). Give totals per standard tag, and list separately every contact decided under 2c.</li>
     <li><strong>Workflow inventory.</strong> Find every workflow, active or draft, that adds, removes, triggers on or filters on any tag from step 1, or that runs on any of the five calendars. For each one give: name, on/off, trigger, what it does, and which tag it adds. Flag duplicates and overlaps, and recommend retire, merge or keep for each.</li>
-    <li><strong>Trigger check.</strong> List every workflow that triggers when <code>pds-booked</code>, <code>pem-booked</code> or <code>acta customer</code> is added. Bulk-adding these tags must not send messages, move opportunities or notify staff. Say exactly how you will prevent that.</li>
+    <li><strong>Trigger check.</strong> List every workflow that triggers when <code>pds-booked</code> or <code>pem-booked</code> is added. Bulk-adding these tags must not send messages, move opportunities or notify staff. Say exactly how you will prevent that.</li>
     <li><strong>Calendar check.</strong> For each of the five calendars, confirm what a new booking tags today. The target: PDS calendars add <code>pds-booked</code>; PEM calendars add <code>pem-booked</code> and <code>pds-booked</code>.</li>
   </ol>
   <div class="flag"><span class="lab">Checkpoint 1</span><p>Send steps 1 to 5. Wait for Tommy's approval of the mapping and the workflow changes before touching anything.</p></div>
@@ -199,14 +197,14 @@
   <h3>Phase 3 · Add the standard tags</h3>
   <ol>
     <li>Put the safeguard from Phase 1 step 4 in place.</li>
-    <li>Add the standard tags per the approved mapping, including <code>acta customer</code> and the PEM-implies-PDS rule.</li>
+    <li>Add the standard tags per the approved mapping, including the PEM-implies-PDS rule.</li>
     <li>Remove the safeguard and confirm those workflows are running normally again.</li>
   </ol>
   <div class="flag"><span class="lab">Checkpoint 3</span><p>For each standard tag, send the count before and after. Confirm that every contact holding an old booking tag now holds a standard one, and list any exceptions. Wait for written approval to remove the old tags.</p></div>
 
   <h3>Phase 4 · Remove old tags from contacts</h3>
   <ol>
-    <li>Remove every old booking tag from every contact. Customer and purchase tags stay. Status tags stay.</li>
+    <li>Remove every old booking tag from every contact. Leave all other tags as they are.</li>
   </ol>
   <div class="flag"><span class="lab">Checkpoint 4</span><p>Confirm that every old booking tag now has 0 contacts, and that the standard tag counts have not changed since Checkpoint 3.</p></div>
 
@@ -222,15 +220,14 @@
 <section class="prose">
   <ul>
     <li>Filtering by <code>pds-booked</code> shows everyone who has ever booked a sales call, and <code>pem-booked</code> shows everyone who booked a closing call.</li>
-    <li><code>acta customer</code> is on every purchaser.</li>
     <li>No old booking tag exists in the account, and no workflow can recreate one.</li>
-    <li>Out of scope: changing status tags, programme-specific purchase tags, and pipeline or stage changes (those are covered by the separate automation spec).</li>
+    <li>Out of scope: every tag that is not a booking tag, and pipeline or stage changes (those are covered by the separate automation spec).</li>
   </ul>
 </section>
 
 
 <footer>
-  ACTA Football · Booking &amp; Customer Tag Cleanup · v1.0 · calendars and tags read from the live CRM, 30 September 2026
+  ACTA Football · Booking Tag Cleanup · v1.1 · calendars and tags read from the live CRM, 30 September 2026
 </footer>
 
 </div>
