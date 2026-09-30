@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="description" content="Booking and customer tag cleanup brief for ACTA Football's GoHighLevel specialist.">
+<title>ACTA Tag Cleanup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@500;600;700&family=Nunito:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#FBFCFD; --surface:#FFFFFF; --surface-2:#F2F6FA;
+    --line:#DCE3EB; --line-strong:#C3CEDB;
+    --ink:#101C2E; --muted:#56657A;
+    --navy:#16294A; --cyan:#0B7F9C; --cyan-bright:#1FB6D8;
+    --red:#C0303B; --red-bg:#FDF2F3;
+    --amber:#9A6100; --amber-bg:#FDF7EC;
+    --green:#1F7A52; --green-bg:#F0F8F4;
+    --mono-bg:#EEF3F8;
+    --display:"Fira Sans Extra Condensed","Helvetica Neue",Arial,sans-serif;
+    --body:"Nunito","Segoe UI",system-ui,sans-serif;
+    --mono:"IBM Plex Mono","SFMono-Regular",Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B131D; --surface:#111C28; --surface-2:#16232F;
+      --line:#233240; --line-strong:#33475A;
+      --ink:#E7EEF6; --muted:#93A4B7;
+      --navy:#9FC4E8; --cyan:#4FCDE9; --cyan-bright:#4FCDE9;
+      --red:#FF868D; --red-bg:#2A171A;
+      --amber:#E4A94E; --amber-bg:#241D12;
+      --green:#5FCF9B; --green-bg:#132419;
+      --mono-bg:#18242F;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B131D; --surface:#111C28; --surface-2:#16232F;
+    --line:#233240; --line-strong:#33475A;
+    --ink:#E7EEF6; --muted:#93A4B7;
+    --navy:#9FC4E8; --cyan:#4FCDE9; --cyan-bright:#4FCDE9;
+    --red:#FF868D; --red-bg:#2A171A;
+    --amber:#E4A94E; --amber-bg:#241D12;
+    --green:#5FCF9B; --green-bg:#132419;
+    --mono-bg:#18242F;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--body); font-size:16.5px; line-height:1.62;
+    margin:0; padding:0 20px 96px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto}
+  .prose{max-width:70ch}
+
+  header.mast{border-bottom:3px solid var(--ink);padding:56px 0 18px;margin-bottom:34px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin:0 0 14px}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(38px,7vw,60px);line-height:1.02;letter-spacing:-.005em;margin:0 0 12px;text-wrap:balance}
+  .standfirst{font-size:17px;color:var(--muted);margin:0;max-width:62ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .meta b{color:var(--ink);font-weight:500}
+
+  .part{display:flex;align-items:baseline;gap:14px;border-top:2px solid var(--ink);padding-top:14px;margin:72px 0 8px}
+  .part-n{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);white-space:nowrap}
+  h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4.2vw,36px);line-height:1.1;margin:0;letter-spacing:.005em;text-wrap:balance}
+  h3{font-family:var(--display);font-weight:600;font-size:22px;line-height:1.2;margin:38px 0 10px;letter-spacing:.01em}
+  p{margin:0 0 14px;max-width:70ch}
+  ul,ol{margin:0 0 16px;padding-left:22px;max-width:70ch}
+  li{margin:0 0 7px}
+  section{margin:52px 0 0}
+
+  code{font-family:var(--mono);font-size:.86em;background:var(--mono-bg);color:var(--ink);padding:.12em .42em;border-radius:3px;border:1px solid var(--line);white-space:nowrap}
+  .id{font-family:var(--mono);font-size:.78em;color:var(--muted);white-space:nowrap}
+
+  .scroll{overflow-x:auto;margin:18px 0 22px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:var(--surface-2);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  td code{white-space:normal}
+
+  .rule{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--cyan-bright);border-radius:5px;padding:16px 18px;margin:0 0 14px}
+  .rule .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px}
+  .rule .row{margin-bottom:11px}
+  .rule .row:last-child{margin-bottom:0}
+
+  .flag,.note,.ok{border-radius:5px;padding:15px 18px;margin:20px 0}
+  .flag{background:var(--red-bg);border:1px solid var(--red)}
+  .note{background:var(--amber-bg);border:1px solid var(--amber)}
+  .ok{background:var(--green-bg);border:1px solid var(--green)}
+  .flag .lab,.note .lab,.ok .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;display:block;margin-bottom:6px}
+  .flag .lab{color:var(--red)} .note .lab{color:var(--amber)} .ok .lab{color:var(--green)}
+  .flag p:last-child,.note p:last-child,.ok p:last-child{margin-bottom:0}
+
+  .task{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--red);border:1px solid var(--red);border-radius:3px;padding:1px 5px;margin-left:6px;white-space:nowrap}
+  .conf{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);border:1px solid var(--green);border-radius:3px;padding:1px 5px;margin-left:6px;white-space:nowrap}
+
+  footer{margin-top:76px;padding-top:20px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--muted)}
+  a{color:var(--cyan)}
+  a:focus-visible{outline:2px solid var(--cyan-bright);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">ACTA Football · GoHighLevel</p>
+  <h1>Booking &amp; Customer Tag Cleanup</h1>
+  <p class="standfirst">Replace the many inconsistent "call booked" tags with one standard set, tag every customer, then remove the old tags so nobody can apply them again. Five phases, each ending at a checkpoint where you report to Tommy and wait for approval.</p>
+  <div class="meta">
+    <span>Prepared for <b>ACTA Football</b></span>
+    <span>Version <b>1.0</b></span>
+    <span>Calendars <b>read from the live CRM, 30 Sep 2026</b></span>
+  </div>
+</header>
+
+<section class="prose">
+  <h3 style="margin-top:0">The problem</h3>
+  <p>Several past CRM specialists, plus an older booking system (iClosed), each tagged bookings their own way. Not all iClosed appointments were migrated, so some contacts who really did book have no appointment on record, only a tag. The result: ACTA cannot reliably filter contacts by whether they have or haven't booked a call.</p>
+
+  <h3>How ACTA's sales process works</h3>
+  <p>There are two sales calls. The <strong>PDS</strong> (Player Development Session) is the first call. The <strong>PEM</strong> (Player Evaluation Meeting) is the second call, the closing call. Nobody reaches a PEM without a PDS first.</p>
+  <p>Anything in <code>this typeface</code> is a literal value in the CRM. Type it exactly.</p>
+
+  <h3>The five calendars in use</h3>
+  <p>Only these five calendars are in use. All others, including <code>ACTA Discovery Call</code>, are not part of the sales process.</p>
+</section>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>Calendar</th><th>ID</th><th>A booking here means</th></tr></thead>
+  <tbody>
+    <tr><td><code>ACTA Player Development Session</code></td><td class="id">xCH2v6k2AKGUQb12NXuo</td><td>PDS</td></tr>
+    <tr><td><code>-- ACTA Player Development Session</code></td><td class="id">AVnCdHE5MgQpF4q4t6Xl</td><td>PDS</td></tr>
+    <tr><td><code>ACTA Player Evaluation Meeting</code></td><td class="id">K7EtYcZb3wwKtYM72b5e</td><td>PEM</td></tr>
+    <tr><td><code>Follow Up - ACTA Player Evaluation Meeting</code></td><td class="id">hHD2MGGb5jMwouPNxEE4</td><td>PEM</td></tr>
+    <tr><td><code>ACTA Onboarding Meeting</code></td><td class="id">lXE04vrbONLxGRFiIs07</td><td>PEM</td></tr>
+  </tbody>
+</table>
+</div>
+
+<section class="prose">
+  <h3>The standard tags (the only ones that should exist when you finish)</h3>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Tag</th><th>Means</th></tr></thead>
+    <tbody>
+      <tr><td><code>pds-booked</code></td><td>The contact has booked a PDS at some point.</td></tr>
+      <tr><td><code>pem-booked</code></td><td>The contact has booked a PEM at some point.</td></tr>
+      <tr><td><code>acta customer</code></td><td>The contact has bought something from ACTA. This tag already exists but is not being applied.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<div class="part"><span class="part-n">Rules</span><h2>Decided by ACTA</h2></div>
+
+<section class="prose">
+  <div class="rule">
+    <div class="row"><span class="lab">1 · Every booking tag gets replaced</span>Every contact carrying any old booking tag must end up with a standard booking tag. The only question is which one. Do not drop a contact because there is no appointment on record, because iClosed bookings were not all migrated.</div>
+    <div class="row"><span class="lab">2 · Decide from evidence, in this order</span>(a) The contact's appointment history on the five calendars above. (b) If there is no appointment on record, the rest of the contact's history: what the old tag means, opportunity and pipeline stage, notes, conversations. (c) If it's still unclear whether the call was a closing call, use <code>pds-booked</code>.</div>
+    <div class="row"><span class="lab">3 · PEM implies PDS</span>Any contact with <code>pem-booked</code> must also have <code>pds-booked</code>. This includes contacts who have <code>pem-booked</code> today.</div>
+    <div class="row"><span class="lab">4 · Every purchaser is a customer</span>Anyone who has bought anything, at any price, gets <code>acta customer</code>. Look at purchase tags, won/sold tags, won opportunities and payments. Do not create tags for individual programmes. That is a separate later job.</div>
+    <div class="row"><span class="lab">5 · Status tags: report only</span>Tags for no-show, cancelled, rescheduled, missed and attended are out of scope. List them with counts in Phase 1, and change nothing.</div>
+    <div class="row"><span class="lab">6 · Ask, don't guess</span>If you can't tell what an old tag means, ask Tommy before mapping it.</div>
+    <div class="row"><span class="lab">7 · Add first, remove later</span>Never remove or delete a tag until the replacement tags are in place and Tommy has approved in writing.</div>
+  </div>
+</section>
+
+<div class="part"><span class="part-n">Process</span><h2>Five phases</h2></div>
+
+<section class="prose">
+  <p>Each <strong>checkpoint</strong> means: send Tommy the listed deliverables in writing (a Google Sheet is fine), then stop until he approves. Include counts, not just descriptions.</p>
+
+  <h3>Phase 0 · Backup</h3>
+  <ol>
+    <li>Export every contact with all fields and tags to CSV before changing anything. Share it with Tommy.</li>
+  </ol>
+
+  <h3>Phase 1 · Audit (no changes)</h3>
+  <ol>
+    <li><strong>Tag inventory.</strong> List every tag in the account that indicates a booked call, a purchase or customer, or a booking status. For each one, give its contact count, what it means, and your proposed mapping: <code>pds-booked</code>, <code>pem-booked</code> + <code>pds-booked</code>, <code>acta customer</code>, status (report only), or unused (0 contacts). State the evidence behind each mapping, e.g. "91% of these contacts have a PEM-calendar appointment".</li>
+    <li><strong>Contact mapping.</strong> For each contact carrying an old tag, record which standard tag(s) they will receive and which rule decided it (2a, 2b or 2c). Give totals per standard tag, and list separately every contact decided under 2c.</li>
+    <li><strong>Workflow inventory.</strong> Find every workflow, active or draft, that adds, removes, triggers on or filters on any tag from step 1, or that runs on any of the five calendars. For each one give: name, on/off, trigger, what it does, and which tag it adds. Flag duplicates and overlaps, and recommend retire, merge or keep for each.</li>
+    <li><strong>Trigger check.</strong> List every workflow that triggers when <code>pds-booked</code>, <code>pem-booked</code> or <code>acta customer</code> is added. Bulk-adding these tags must not send messages, move opportunities or notify staff. Say exactly how you will prevent that.</li>
+    <li><strong>Calendar check.</strong> For each of the five calendars, confirm what a new booking tags today. The target: PDS calendars add <code>pds-booked</code>; PEM calendars add <code>pem-booked</code> and <code>pds-booked</code>.</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 1</span><p>Send steps 1 to 5. Wait for Tommy's approval of the mapping and the workflow changes before touching anything.</p></div>
+
+  <h3>Phase 2 · Fix the source</h3>
+  <ol>
+    <li>Make the approved workflow changes, so that nothing adds an old tag any more and every new booking adds the correct standard tags.</li>
+    <li>Test with a test contact: book once on each of the five calendars. Confirm the right tags are added and nothing unexpected fires. Delete the test contact afterwards.</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 2</span><p>Send what you changed and the five test results.</p></div>
+
+  <h3>Phase 3 · Add the standard tags</h3>
+  <ol>
+    <li>Put the safeguard from Phase 1 step 4 in place.</li>
+    <li>Add the standard tags per the approved mapping, including <code>acta customer</code> and the PEM-implies-PDS rule.</li>
+    <li>Remove the safeguard and confirm those workflows are running normally again.</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 3</span><p>For each standard tag, send the count before and after. Confirm that every contact holding an old booking tag now holds a standard one, and list any exceptions. Wait for written approval to remove the old tags.</p></div>
+
+  <h3>Phase 4 · Remove old tags from contacts</h3>
+  <ol>
+    <li>Remove every old booking tag from every contact. Customer and purchase tags stay. Status tags stay.</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 4</span><p>Confirm that every old booking tag now has 0 contacts, and that the standard tag counts have not changed since Checkpoint 3.</p></div>
+
+  <h3>Phase 5 · Delete the old tags from the CRM</h3>
+  <ol>
+    <li>First confirm that no workflow still references any old tag. Deleting a tag a workflow still uses breaks that step.</li>
+    <li>Delete the old booking tags from the tag list so nobody can apply them again. Include the unused ones.</li>
+  </ol>
+  <div class="flag"><span class="lab">Final report</span><p>Send the tags deleted, the final counts for the standard tags, and confirmation that a fresh test booking on each calendar still tags correctly.</p></div>
+</section>
+
+<div class="part"><span class="part-n">Scope</span><h2>Done means</h2></div>
+<section class="prose">
+  <ul>
+    <li>Filtering by <code>pds-booked</code> shows everyone who has ever booked a sales call, and <code>pem-booked</code> shows everyone who booked a closing call.</li>
+    <li><code>acta customer</code> is on every purchaser.</li>
+    <li>No old booking tag exists in the account, and no workflow can recreate one.</li>
+    <li>Out of scope: changing status tags, programme-specific purchase tags, and pipeline or stage changes (those are covered by the separate automation spec).</li>
+  </ul>
+</section>
+
+
+<footer>
+  ACTA Football · Booking &amp; Customer Tag Cleanup · v1.0 · calendars and tags read from the live CRM, 30 September 2026
+</footer>
+
+</div>
+
+</body>
+</html>
