@@ -108,10 +108,10 @@
 <header class="mast">
   <p class="eyebrow">ACTA Football · GoHighLevel</p>
   <h1>Booking Tag Cleanup</h1>
-  <p class="standfirst">Replace the many inconsistent "call booked" tags with one standard pair, then remove the old tags so nobody can apply them again. Five phases, each ending at a checkpoint where you report to Tommy and wait for approval.</p>
+  <p class="standfirst">Replace the many inconsistent "call booked" tags with one standard pair, then remove the old tags so nobody can apply them again. Six phases after a backup, each ending at a checkpoint where you report to Tommy and wait for approval.</p>
   <div class="meta">
     <span>Prepared for <b>ACTA Football</b></span>
-    <span>Version <b>1.1</b></span>
+    <span>Version <b>1.2</b></span>
     <span>Calendars <b>read from the live CRM, 30 Sep 2026</b></span>
   </div>
 </header>
@@ -167,7 +167,7 @@
   </div>
 </section>
 
-<div class="part"><span class="part-n">Process</span><h2>Five phases</h2></div>
+<div class="part"><span class="part-n">Process</span><h2>Six phases</h2></div>
 
 <section class="prose">
   <p>Each <strong>checkpoint</strong> means: send Tommy the listed deliverables in writing (a Google Sheet is fine), then stop until he approves. Include counts, not just descriptions.</p>
@@ -177,40 +177,49 @@
     <li>Export every contact with all fields and tags to CSV before changing anything. Share it with Tommy.</li>
   </ol>
 
-  <h3>Phase 1 · Audit (no changes)</h3>
+  <h3>Phase 1 · Workflow report (no changes)</h3>
+  <p>Start here. Old tags keep coming back for as long as a workflow creates them, so find the sources before touching any contact.</p>
+  <ol>
+    <li><strong>Live workflows creating old booking tags.</strong> List every live workflow that adds an old booking tag. For each one give: name, folder, trigger, what it does in plain terms, which old tag(s) it adds, and whether it duplicates another workflow.</li>
+    <li><strong>Workflows that aren't live but create old booking tags.</strong> List every draft or switched-off workflow that adds an old booking tag, with the same details. Say whether each one is redundant and safe to delete, or still needed.</li>
+    <li><strong>Workflows that depend on old booking tags.</strong> List every workflow, live or not, that triggers on or filters by an old booking tag. These will break when the old tags are deleted.</li>
+    <li><strong>Your recommendation for each workflow above:</strong> retire it, merge it into another workflow (name which one), or keep it and switch it to the standard tag.</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 1</span><p>Send steps 1 to 4. Tommy decides what happens to each workflow. Change nothing yet.</p></div>
+
+  <h3>Phase 2 · Tag audit (no changes)</h3>
   <ol>
     <li><strong>Tag inventory.</strong> List every tag in the account that indicates a booked call. For each one, give its contact count, what it means, and your proposed mapping: <code>pds-booked</code>, <code>pem-booked</code> + <code>pds-booked</code>, or unused (0 contacts). State the evidence behind each mapping, e.g. "91% of these contacts have a PEM-calendar appointment".</li>
     <li><strong>Contact mapping.</strong> For each contact carrying an old tag, record which standard tag(s) they will receive and which rule decided it (2a, 2b or 2c). Give totals per standard tag, and list separately every contact decided under 2c.</li>
-    <li><strong>Workflow inventory.</strong> Find every workflow, active or draft, that adds, removes, triggers on or filters on any tag from step 1, or that runs on any of the five calendars. For each one give: name, on/off, trigger, what it does, and which tag it adds. Flag duplicates and overlaps, and recommend retire, merge or keep for each.</li>
     <li><strong>Trigger check.</strong> List every workflow that triggers when <code>pds-booked</code> or <code>pem-booked</code> is added. Bulk-adding these tags must not send messages, move opportunities or notify staff. Say exactly how you will prevent that.</li>
     <li><strong>Calendar check.</strong> For each of the five calendars, confirm what a new booking tags today. The target: PDS calendars add <code>pds-booked</code>; PEM calendars add <code>pem-booked</code> and <code>pds-booked</code>.</li>
   </ol>
-  <div class="flag"><span class="lab">Checkpoint 1</span><p>Send steps 1 to 5. Wait for Tommy's approval of the mapping and the workflow changes before touching anything.</p></div>
+  <div class="flag"><span class="lab">Checkpoint 2</span><p>Send steps 1 to 4. Wait for Tommy's approval of the mapping before touching anything.</p></div>
 
-  <h3>Phase 2 · Fix the source</h3>
+  <h3>Phase 3 · Fix the source</h3>
   <ol>
-    <li>Make the approved workflow changes, so that nothing adds an old tag any more and every new booking adds the correct standard tags.</li>
+    <li>Make the workflow changes Tommy approved at Checkpoint 1, so that nothing adds an old tag any more and every new booking adds the correct standard tags.</li>
     <li>Test with a test contact: book once on each of the five calendars. Confirm the right tags are added and nothing unexpected fires. Delete the test contact afterwards.</li>
   </ol>
-  <div class="flag"><span class="lab">Checkpoint 2</span><p>Send what you changed and the five test results.</p></div>
+  <div class="flag"><span class="lab">Checkpoint 3</span><p>Send what you changed and the five test results.</p></div>
 
-  <h3>Phase 3 · Add the standard tags</h3>
+  <h3>Phase 4 · Add the standard tags</h3>
   <ol>
-    <li>Put the safeguard from Phase 1 step 4 in place.</li>
+    <li>Put the safeguard from Phase 2 step 3 in place.</li>
     <li>Add the standard tags per the approved mapping, including the PEM-implies-PDS rule.</li>
     <li>Remove the safeguard and confirm those workflows are running normally again.</li>
   </ol>
-  <div class="flag"><span class="lab">Checkpoint 3</span><p>For each standard tag, send the count before and after. Confirm that every contact holding an old booking tag now holds a standard one, and list any exceptions. Wait for written approval to remove the old tags.</p></div>
+  <div class="flag"><span class="lab">Checkpoint 4</span><p>For each standard tag, send the count before and after. Confirm that every contact holding an old booking tag now holds a standard one, and list any exceptions. Wait for written approval to remove the old tags.</p></div>
 
-  <h3>Phase 4 · Remove old tags from contacts</h3>
+  <h3>Phase 5 · Remove old tags from contacts</h3>
   <ol>
     <li>Remove every old booking tag from every contact. Leave all other tags as they are.</li>
   </ol>
-  <div class="flag"><span class="lab">Checkpoint 4</span><p>Confirm that every old booking tag now has 0 contacts, and that the standard tag counts have not changed since Checkpoint 3.</p></div>
+  <div class="flag"><span class="lab">Checkpoint 5</span><p>Confirm that every old booking tag now has 0 contacts, and that the standard tag counts have not changed since Checkpoint 4.</p></div>
 
-  <h3>Phase 5 · Delete the old tags from the CRM</h3>
+  <h3>Phase 6 · Delete the old tags from the CRM</h3>
   <ol>
-    <li>First confirm that no workflow still references any old tag. Deleting a tag a workflow still uses breaks that step.</li>
+    <li>First confirm that no workflow from the Phase 1 report still references an old tag. Deleting a tag a workflow still uses breaks that step.</li>
     <li>Delete the old booking tags from the tag list so nobody can apply them again. Include the unused ones.</li>
   </ol>
   <div class="flag"><span class="lab">Final report</span><p>Send the tags deleted, the final counts for the standard tags, and confirmation that a fresh test booking on each calendar still tags correctly.</p></div>
@@ -227,7 +236,7 @@
 
 
 <footer>
-  ACTA Football · Booking Tag Cleanup · v1.1 · calendars and tags read from the live CRM, 30 September 2026
+  ACTA Football · Booking Tag Cleanup · v1.2 · calendars and tags read from the live CRM, 30 September 2026
 </footer>
 
 </div>
