@@ -111,7 +111,7 @@
   <p class="standfirst">Record every successful payment, refund and chargeback from Whop, Commas and Kajabi against the right contact in the CRM. That covers all history now and every new transaction from now on. The result is one payment record per customer that everyone trusts, and an opportunity value that is exact to the cent.</p>
   <div class="meta">
     <span>Prepared for <b>ACTA Football</b></span>
-    <span>Version <b>1.1</b></span>
+    <span>Version <b>1.2</b></span>
     <span>Current state <b>read from the live CRM, 2 Oct 2026</b></span>
   </div>
 </header>
@@ -133,7 +133,7 @@
 <table>
   <thead><tr><th>Field</th><th>Contacts with data</th><th>Notes</th></tr></thead>
   <tbody>
-    <tr><td><code>Revenue</code></td><td>46</td><td><strong>Something is writing to it right now</strong>, probably the manual sales dashboard the reps update. The newest entry is 2 Oct 2026. The units are mixed: <code>4700</code> appears 30 times (probably $47.00 recorded in cents), <code>599700</code> means $5,997 in cents, yet <code>5997</code> elsewhere means $5,997 in dollars.</td></tr>
+    <tr><td><code>Revenue</code></td><td>46</td><td><strong>An existing connection is writing to it right now.</strong> The newest entry is 2 Oct 2026. Every value lines up with a <code>purchased-…</code> product tag on the same contact (e.g. <code>4700</code> ↔ <code>purchased-the confidence accelerator</code>), so it is almost certainly a payment platform integration, not manual entry. The source is unknown. The units are mixed: <code>4700</code> appears 30 times (probably $47.00 recorded in cents), <code>599700</code> means $5,997 in cents, yet <code>5997</code> elsewhere means $5,997 in dollars.</td></tr>
     <tr><td><code>Payment Date</code></td><td>44</td><td>Same contacts and same live source as Revenue.</td></tr>
     <tr><td><code>Payment Method</code>, <code>Payment Plan</code>, <code>Deposit Amount</code>, <code>Cash Collected</code></td><td>0</td><td>Empty. Delete in Phase 6.</td></tr>
   </tbody>
@@ -173,7 +173,7 @@
 
 <section class="prose">
   <h3>The payment ledger</h3>
-  <p>Create a <strong>custom object</strong> called <code>Payment</code>, associated with the contact, with one record per transaction. This is the single source of truth: every field above is calculated from it. If ACTA's plan doesn't support custom objects, raise it at Checkpoint 1. Don't fall back to a text field without approval.</p>
+  <p>Create a <strong>custom object</strong> called <code>Payment</code>, associated with the contact, with one record per transaction. Each payment is its own record, like a row in a table, not a separate custom field. The contact page lists them one after another, and the structure is identical whether a customer has 1 payment or 50. This is the single source of truth: every field above is calculated from it. If ACTA's plan doesn't support custom objects, raise it at Checkpoint 1. Don't fall back to a text field without approval.</p>
 </section>
 <div class="scroll">
 <table>
@@ -227,7 +227,7 @@
 
   <h3>Phase 1 · Discovery (no changes)</h3>
   <ol>
-    <li><strong>Find what writes <code>Revenue</code> and <code>Payment Date</code> today.</strong> It is believed to be the manual sales dashboard the reps update. Confirm the exact source, and list anything else that relies on that dashboard's data, so nothing breaks when the old fields go.</li>
+    <li><strong>Find what writes <code>Revenue</code>, <code>Payment Date</code> and the <code>purchased-…</code> tags today:</strong> the integration, app or workflow, which platform it serves, and why units differ between products. Check the sub-account's audit logs for what or who is making the changes. List everything else that relies on it, so nothing breaks when it's switched off. The <code>purchased-…</code> tags must keep being applied: replace that function, don't lose it.</li>
     <li><strong>Payment links:</strong> do per-customer links exist, on which platforms, and does the CRM contact ID reach the platform's transaction record? Give the share of historical transactions that carry it.</li>
     <li><strong>For each platform:</strong> how you'll pull the full transaction history; whether it sends live events for payments, refunds and chargebacks; and what units it reports amounts in.</li>
     <li><strong>Product catalogue:</strong> every product, with price, instalment structure and your proposed ACTA product name.</li>
@@ -283,7 +283,7 @@
 </section>
 
 <footer>
-  ACTA Football · Payments Integration Spec · v1.1 · current state read from the live CRM, 2 October 2026
+  ACTA Football · Payments Integration Spec · v1.2 · current state read from the live CRM, 2 October 2026
 </footer>
 
 </div>
