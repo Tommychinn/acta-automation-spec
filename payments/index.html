@@ -111,7 +111,7 @@
   <p class="standfirst">Record every payment from Whop, Commas (formerly Fanbasis) and Kajabi, plus manually entered ones, against the right contact in the CRM. That covers all history now and every new transaction from now on. The result is one payment ledger per customer that everyone trusts, and an opportunity value that is exact to the cent.</p>
   <div class="meta">
     <span>Prepared for <b>ACTA Football</b></span>
-    <span>Version <b>2.1</b></span>
+    <span>Version <b>2.2</b></span>
     <span>Current state <b>read from the live CRM, 2 Oct 2026</b></span>
   </div>
 </header>
@@ -147,8 +147,8 @@
     <li>Customers are marked Won in several pipelines at once, and some carry the full deal value in each. One customer shows $5,997 in three pipelines, so they count as $17,991 in any total.</li>
     <li>303 open opportunities in <code>PDS AI SDR Lead Pipeline P&amp;O</code> carry a placeholder <code>$3,000</code>. That is not real money.</li>
   </ul>
-  <h3>Payment links</h3>
-  <p>You have already set up a payment link for each customer. Whop and Commas can both carry the CRM contact ID through checkout into the transaction. Confirm how far your links do this, because it is the most reliable way to match payments (Rule 4a).</p>
+  <h3>Your existing per-customer tracking</h3>
+  <p>You may already have set up something that tracks payments per customer, such as payment links that carry the customer's CRM ID or email through checkout. If so, <strong>build on it; don't build a parallel system.</strong> It becomes the first matching step (Rule 4a). Whop and Commas can both carry a CRM ID through checkout into the transaction.</p>
 </section>
 
 <div class="part"><span class="part-n">Part one</span><h2>What to build</h2></div>
@@ -247,7 +247,7 @@
   <h3>Phase 1 · Discovery (no changes)</h3>
   <ol>
     <li><strong>What writes the old fields.</strong> Find what fills <code>Revenue</code>, <code>Payment Date</code> and the <code>purchased-…</code> tags (believed to be a Zapier zap). Check the sub-account's audit logs. List everything that relies on it. The <code>purchased-…</code> tags must keep being applied after switch-off: replace that job, don't lose it.</li>
-    <li><strong>Payment links.</strong> For the per-customer links you set up: which processors they cover, whether the CRM contact ID reaches each transaction, and what share of historical transactions carry it.</li>
+    <li><strong>Your existing tracking.</strong> Describe what you've already set up to track payments per customer: what it captures (CRM ID, email), which processors it covers, what share of historical transactions carry it, and exactly how you'll fold it into this build.</li>
     <li><strong>Field mapping.</strong> For each processor, show how its data maps to every ledger field, and flag any gaps. Known gaps to plan around: Kajabi gives no failed payments, no refund or dispute events, and no card details; Commas' history has no date filter and no payment method; only Whop gives card last 4 on every payment. Confirm whether Kajabi takes payments through Kajabi Payments or ACTA's own Stripe or PayPal, because failure and card detail may have to come from there.</li>
     <li><strong>Payer details.</strong> Confirm whether each processor gives name, email and phone on every payment. Where one doesn't, say how missing details will be collected when a new contact is created.</li>
     <li><strong>Product mapping.</strong> List every product name on every processor with its proposed category.</li>
@@ -321,7 +321,7 @@
 </section>
 
 <footer>
-  ACTA Football · Payments Integration Spec · v2.1 · current state read from the live CRM, 2 October 2026; processor capabilities from each processor's public API documentation
+  ACTA Football · Payments Integration Spec · v2.2 · current state read from the live CRM, 2 October 2026; processor capabilities from each processor's public API documentation
 </footer>
 
 </div>
