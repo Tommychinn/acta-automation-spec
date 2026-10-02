@@ -111,7 +111,7 @@
   <p class="standfirst">Record every payment from Whop, Commas (formerly Fanbasis) and Kajabi, plus manually entered ones, against the right contact in the CRM. That covers all history now and every new transaction from now on. The result is one payment ledger per customer that everyone trusts, and an opportunity value that is exact to the cent.</p>
   <div class="meta">
     <span>Prepared for <b>ACTA Football</b></span>
-    <span>Version <b>2.2</b></span>
+    <span>Version <b>2.4</b></span>
     <span>Current state <b>read from the live CRM, 2 Oct 2026</b></span>
   </div>
 </header>
@@ -147,8 +147,9 @@
     <li>Customers are marked Won in several pipelines at once, and some carry the full deal value in each. One customer shows $5,997 in three pipelines, so they count as $17,991 in any total.</li>
     <li>303 open opportunities in <code>PDS AI SDR Lead Pipeline P&amp;O</code> carry a placeholder <code>$3,000</code>. That is not real money.</li>
   </ul>
-  <h3>Your existing per-customer tracking</h3>
-  <p>You may already have set up something that tracks payments per customer, such as payment links that carry the customer's CRM ID or email through checkout. If so, <strong>build on it; don't build a parallel system.</strong> It becomes the first matching step (Rule 4a). Whop and Commas can both carry a CRM ID through checkout into the transaction.</p>
+  <h3>Payment links</h3>
+  <p><strong>On the call: the standard links stay.</strong> Payment links are created manually, one per product, and kept in a list. Reps pick the right one and share it in the chat during the sales call. ACTA prioritises conversion on the call, so this doesn't change. The rep tells the prospect to pay using the same email they booked the call with.</p>
+  <p><strong>After the call: a personal link (new).</strong> For a prospect who will pay later, outside the call, the rep can trigger a personal link for a chosen product, which is emailed to the prospect. That link carries the prospect's CRM contact ID as hidden checkout data, so the payment matches to them exactly, whatever email they pay with. It uses the same product and plan as the standard link, so price, checkout and product reporting are unchanged. Whop and Commas both support this. Confirm for Kajabi.</p>
 </section>
 
 <div class="part"><span class="part-n">Part one</span><h2>What to build</h2></div>
@@ -225,8 +226,9 @@
   <div class="rule">
     <div class="row"><span class="lab">1 · Ledger = Lifetime Value = opportunity value</span>The ledger mirrors the processors' transaction flow exactly: every payment, failed attempt, refund and chargeback as each processor records it. <code>Lifetime Value</code> is the sum of its succeeded records, and the opportunity value is set to the same number. If the three ever differ, that is a defect.</div>
     <div class="row"><span class="lab">2 · Which opportunity</span>The value goes on exactly one opportunity per customer: the <code>Player Evaluation Meeting</code> opportunity if one exists, otherwise the <code>PDS Pipeline</code> opportunity (customers closed on the first call). Every other opportunity for that customer, including <code>PDS Confirmation &amp; Qualification</code>, is set to $0. The 303 placeholder $3,000 values are cleared to $0.</div>
+    <div class="row"><span class="lab">2b · Stage on a closed deal</span>A successful payment for a core programme (<code>ACTA One</code>, <code>ACTA Elite</code> or <code>ACTA Pro</code>) moves that same opportunity to <code>Won</code>. Other products do not move stages.</div>
     <div class="row"><span class="lab">3 · One unit, no duplicates</span>The processors report amounts differently. Whop and Commas use dollars, Kajabi uses cents, and Commas sends some prices as text. Convert everything to dollars on the way in. Processing the same transaction twice, from a re-sent event or a backfill re-run, must change nothing.</div>
-    <div class="row"><span class="lab">4 · Matching a payment to a contact</span>In order: (a) the CRM contact ID passed through the payment link; (b) an exact email match, including additional emails; (c) an exact phone match; (d) the processor customer ID already linked to a contact. The first step that finds exactly one contact wins. <strong>Never match on name alone.</strong> Anything else goes to reconciliation (Phase 3) and stays out of every total until it's resolved.</div>
+    <div class="row"><span class="lab">4 · Matching a payment to a contact</span>In order: (a) the CRM contact ID carried by a personal link; (b) an exact email match, including additional emails; (c) an exact phone match; (d) the processor customer ID already linked to a contact. The first step that finds exactly one contact wins. <strong>Never match on name alone.</strong> Anything else goes to reconciliation (Phase 3) and stays out of every total until it's resolved. After go-live, an unmatched payment alerts the rep who owns the deal the same day, so they can confirm who paid while the call is fresh.</div>
     <div class="row"><span class="lab">5 · Second emails and merges</span>When a customer is confirmed to have paid with a second email, add it to their contact as an additional email so future payments match automatically. Merge two contacts only when Tommy approves. The surviving contact keeps every ledger record from both, and its totals are recalculated.</div>
     <div class="row"><span class="lab">6 · Manual payments</span>For bank transfers, cash and anything else that never passed through a processor, a rep adds a <code>Payment</code> record by hand. Date, amount, product, method and reference are all required. It counts exactly like any other payment. Never enter manually a payment that went through a processor, because it would be counted twice.</div>
     <div class="row"><span class="lab">7 · Nothing silent</span>A transaction that fails to write is retried, then logged and alerted. Commas does not resend missed events and Kajabi sends no refund or failure events at all, so the daily check (Phase 6) is the safety net, not an extra.</div>
@@ -247,7 +249,7 @@
   <h3>Phase 1 · Discovery (no changes)</h3>
   <ol>
     <li><strong>What writes the old fields.</strong> Find what fills <code>Revenue</code>, <code>Payment Date</code> and the <code>purchased-…</code> tags (believed to be a Zapier zap). Check the sub-account's audit logs. List everything that relies on it. The <code>purchased-…</code> tags must keep being applied after switch-off: replace that job, don't lose it.</li>
-    <li><strong>Your existing tracking.</strong> Describe what you've already set up to track payments per customer: what it captures (CRM ID, email), which processors it covers, what share of historical transactions carry it, and exactly how you'll fold it into this build.</li>
+    <li><strong>Payment links.</strong> Confirm the current list of standard links: which product and processor each belongs to. Map them to the product categories. Propose how a rep triggers a personal link (e.g. pick the product on the contact, then send) and what the email says.</li>
     <li><strong>Field mapping.</strong> For each processor, show how its data maps to every ledger field, and flag any gaps. Known gaps to plan around: Kajabi gives no failed payments, no refund or dispute events, and no card details; Commas' history has no date filter and no payment method; only Whop gives card last 4 on every payment. Confirm whether Kajabi takes payments through Kajabi Payments or ACTA's own Stripe or PayPal, because failure and card detail may have to come from there.</li>
     <li><strong>Payer details.</strong> Confirm whether each processor gives name, email and phone on every payment. Where one doesn't, say how missing details will be collected when a new contact is created.</li>
     <li><strong>Product mapping.</strong> List every product name on every processor with its proposed category.</li>
@@ -264,7 +266,7 @@
   <ol>
     <li>Pull every historical transaction from all three processors and match each one using Rule 4.</li>
     <li>Per processor, report the transaction count and the totals for payments, refunds and chargebacks. <strong>These must equal the processor's own dashboard totals exactly.</strong></li>
-    <li>Build the <strong>reconciliation sheet</strong> with one row per payer (not per payment), so one decision covers all of that person's payments. Show: the payer's name, email and phone as the processor shows them; their payments (dates, amounts, products); the proposed CRM contact (name, email, link) or "no match found"; and how the match was made. Rows matched by contact ID or exact email are pre-filled as confirmed, for a quick scan. All other rows are left blank for Tommy.</li>
+    <li>Build the <strong>reconciliation sheet</strong> with one row per payer (not per payment), so one decision covers all of that person's payments. Show: the payer's name, email and phone as the processor shows them; their payments (dates, amounts, products); the proposed CRM contact (name, email, link) or "no match found"; and how the match was made. Rows matched by personal-link contact ID or exact email are pre-filled as confirmed, for a quick scan. All other rows are left blank for Tommy.</li>
     <li>For each row, Tommy picks one outcome:
       <ul>
         <li><strong>Yes</strong>: this is the right contact.</li>
@@ -287,6 +289,7 @@
   <h3>Phase 5 · Go live</h3>
   <ol>
     <li>Switch on live updates from all three processors, and switch off whatever was writing the old fields (making sure the <code>purchased-…</code> tags still get applied).</li>
+    <li>Switch on personal links. Test one end to end: the rep triggers it, the prospect receives the email, pays with a <em>different</em> email, and the payment still lands on the right contact.</li>
     <li>Test each processor: a payment, a failed payment and a refund (and a chargeback, if there's a test mode). Then test one manual payment and one manual refund. Show that the ledger, the Payments fields and the opportunity value all update within 5 minutes, and that a repeated event changes nothing.</li>
   </ol>
   <div class="flag"><span class="lab">Checkpoint 4</span><p>Send the test results.</p></div>
@@ -294,7 +297,7 @@
   <h3>Phase 6 · Keep it honest</h3>
   <ol>
     <li>Set up a daily automatic check that pulls the previous day's transactions from each processor and compares them with the ledger. It adds anything missing, such as a missed event or a Kajabi refund, and alerts on any difference it can't resolve. The same daily report lists every new manual entry (who, amount, reference) for a manager to verify against the bank.</li>
-    <li>Write a one-page guide for reps on recording a manual payment, and on when not to.</li>
+    <li>Write a one-page guide for reps: tell every prospect to pay with the email they booked with; how to resolve an unmatched-payment alert; how to record a manual payment, and when not to.</li>
   </ol>
   <div class="flag"><span class="lab">Checkpoint 5</span><p>Send the first three daily check results, the rep guide and the location of the failure log.</p></div>
 
@@ -317,11 +320,14 @@
     <li>For every customer, ledger sum = <code>Lifetime Value</code> = opportunity value, on exactly one opportunity, matching the processors to the cent.</li>
     <li>New transactions appear within 5 minutes, the daily check catches anything missed, and reps can record off-processor payments.</li>
     <li>The old payment fields and placeholder opportunity values are gone, and the <code>purchased-…</code> tags still work.</li>
+    <li>A core programme payment moves the deal to <code>Won</code>.</li>
+    <li>Reps can email a personal payment link for off-call closes, and those payments match exactly.</li>
+    <li>Out of scope: changing the standard links used on calls.</li>
   </ul>
 </section>
 
 <footer>
-  ACTA Football · Payments Integration Spec · v2.2 · current state read from the live CRM, 2 October 2026; processor capabilities from each processor's public API documentation
+  ACTA Football · Payments Integration Spec · v2.4 · current state read from the live CRM, 2 October 2026; processor capabilities from each processor's public API documentation
 </footer>
 
 </div>
