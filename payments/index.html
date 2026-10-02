@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="description" content="Payments integration spec for ACTA Football's GoHighLevel specialist.">
+<title>ACTA Payments Integration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@500;600;700&family=Nunito:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#FBFCFD; --surface:#FFFFFF; --surface-2:#F2F6FA;
+    --line:#DCE3EB; --line-strong:#C3CEDB;
+    --ink:#101C2E; --muted:#56657A;
+    --navy:#16294A; --cyan:#0B7F9C; --cyan-bright:#1FB6D8;
+    --red:#C0303B; --red-bg:#FDF2F3;
+    --amber:#9A6100; --amber-bg:#FDF7EC;
+    --green:#1F7A52; --green-bg:#F0F8F4;
+    --mono-bg:#EEF3F8;
+    --display:"Fira Sans Extra Condensed","Helvetica Neue",Arial,sans-serif;
+    --body:"Nunito","Segoe UI",system-ui,sans-serif;
+    --mono:"IBM Plex Mono","SFMono-Regular",Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B131D; --surface:#111C28; --surface-2:#16232F;
+      --line:#233240; --line-strong:#33475A;
+      --ink:#E7EEF6; --muted:#93A4B7;
+      --navy:#9FC4E8; --cyan:#4FCDE9; --cyan-bright:#4FCDE9;
+      --red:#FF868D; --red-bg:#2A171A;
+      --amber:#E4A94E; --amber-bg:#241D12;
+      --green:#5FCF9B; --green-bg:#132419;
+      --mono-bg:#18242F;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B131D; --surface:#111C28; --surface-2:#16232F;
+    --line:#233240; --line-strong:#33475A;
+    --ink:#E7EEF6; --muted:#93A4B7;
+    --navy:#9FC4E8; --cyan:#4FCDE9; --cyan-bright:#4FCDE9;
+    --red:#FF868D; --red-bg:#2A171A;
+    --amber:#E4A94E; --amber-bg:#241D12;
+    --green:#5FCF9B; --green-bg:#132419;
+    --mono-bg:#18242F;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--body); font-size:16.5px; line-height:1.62;
+    margin:0; padding:0 20px 96px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto}
+  .prose{max-width:70ch}
+
+  header.mast{border-bottom:3px solid var(--ink);padding:56px 0 18px;margin-bottom:34px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin:0 0 14px}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(38px,7vw,60px);line-height:1.02;letter-spacing:-.005em;margin:0 0 12px;text-wrap:balance}
+  .standfirst{font-size:17px;color:var(--muted);margin:0;max-width:62ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .meta b{color:var(--ink);font-weight:500}
+
+  .part{display:flex;align-items:baseline;gap:14px;border-top:2px solid var(--ink);padding-top:14px;margin:72px 0 8px}
+  .part-n{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);white-space:nowrap}
+  h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4.2vw,36px);line-height:1.1;margin:0;letter-spacing:.005em;text-wrap:balance}
+  h3{font-family:var(--display);font-weight:600;font-size:22px;line-height:1.2;margin:38px 0 10px;letter-spacing:.01em}
+  p{margin:0 0 14px;max-width:70ch}
+  ul,ol{margin:0 0 16px;padding-left:22px;max-width:70ch}
+  li{margin:0 0 7px}
+  section{margin:52px 0 0}
+
+  code{font-family:var(--mono);font-size:.86em;background:var(--mono-bg);color:var(--ink);padding:.12em .42em;border-radius:3px;border:1px solid var(--line);white-space:nowrap}
+  .id{font-family:var(--mono);font-size:.78em;color:var(--muted);white-space:nowrap}
+
+  .scroll{overflow-x:auto;margin:18px 0 22px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:var(--surface-2);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  td code{white-space:normal}
+
+  .rule{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--cyan-bright);border-radius:5px;padding:16px 18px;margin:0 0 14px}
+  .rule .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px}
+  .rule .row{margin-bottom:11px}
+  .rule .row:last-child{margin-bottom:0}
+
+  .flag,.note,.ok{border-radius:5px;padding:15px 18px;margin:20px 0}
+  .flag{background:var(--red-bg);border:1px solid var(--red)}
+  .note{background:var(--amber-bg);border:1px solid var(--amber)}
+  .ok{background:var(--green-bg);border:1px solid var(--green)}
+  .flag .lab,.note .lab,.ok .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;display:block;margin-bottom:6px}
+  .flag .lab{color:var(--red)} .note .lab{color:var(--amber)} .ok .lab{color:var(--green)}
+  .flag p:last-child,.note p:last-child,.ok p:last-child{margin-bottom:0}
+
+  .task{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--red);border:1px solid var(--red);border-radius:3px;padding:1px 5px;margin-left:6px;white-space:nowrap}
+  .conf{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);border:1px solid var(--green);border-radius:3px;padding:1px 5px;margin-left:6px;white-space:nowrap}
+
+  footer{margin-top:76px;padding-top:20px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--muted)}
+  a{color:var(--cyan)}
+  a:focus-visible{outline:2px solid var(--cyan-bright);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">ACTA Football · GoHighLevel</p>
+  <h1>Payments Integration Spec</h1>
+  <p class="standfirst">Record every successful payment, refund and chargeback from Whop, Commas and Kajabi against the right contact in the CRM. That covers all history now and every new transaction from now on. The result is one payment record per customer that everyone trusts, and an opportunity value that is exact to the cent.</p>
+  <div class="meta">
+    <span>Prepared for <b>ACTA Football</b></span>
+    <span>Version <b>1.0</b></span>
+    <span>Current state <b>read from the live CRM, 2 Oct 2026</b></span>
+  </div>
+</header>
+
+<section class="prose">
+  <h3 style="margin-top:0">The standard</h3>
+  <div class="ok"><span class="lab">Non-negotiable</span>
+  <p>For every customer, <strong>Lifetime Value</strong> in the CRM must equal what the three payment platforms say that customer has paid, net of refunds and chargebacks, <strong>to the cent</strong>. The opportunity value must equal Lifetime Value. Close is not good enough. Every phase below ends with proof of this.</p></div>
+  <p>Anything in <code>this typeface</code> is a literal value in the CRM. All amounts are US dollars.</p>
+</section>
+
+<div class="part"><span class="part-n">Context</span><h2>What exists today</h2></div>
+
+<section class="prose">
+  <h3>Old payment fields</h3>
+  <p>These were found in the contact fields on 2 October 2026.</p>
+</section>
+<div class="scroll">
+<table>
+  <thead><tr><th>Field</th><th>Contacts with data</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><code>Revenue</code></td><td>46</td><td><strong>Something is writing to it right now.</strong> The newest entry is 2 Oct 2026. The units are mixed: <code>4700</code> appears 30 times (probably $47.00 recorded in cents), <code>599700</code> means $5,997 in cents, yet <code>5997</code> elsewhere means $5,997 in dollars.</td></tr>
+    <tr><td><code>Payment Date</code></td><td>44</td><td>Same contacts and same live source as Revenue.</td></tr>
+    <tr><td><code>Payment Method</code>, <code>Payment Plan</code>, <code>Deposit Amount</code>, <code>Cash Collected</code></td><td>0</td><td>Empty. Delete in Phase 6.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<section class="prose">
+  <h3>Opportunity values</h3>
+  <ul>
+    <li>Customers are marked Won in several pipelines at once, and some carry the full deal value in each. One customer shows $5,997 in three pipelines, so they count as $17,991 in any total.</li>
+    <li>303 open opportunities in <code>PDS AI SDR Lead Pipeline P&amp;O</code> carry a placeholder <code>$3,000</code>. That is not real money.</li>
+  </ul>
+  <h3>Payment links</h3>
+  <p>A previous specialist may already have set up a payment link for each customer that tells the platform which CRM contact is paying. Confirm whether this exists and how far it reaches before building any matching logic (Phase 1).</p>
+</section>
+
+<div class="part"><span class="part-n">Part one</span><h2>What to build</h2></div>
+
+<section class="prose">
+  <h3>A <code>Payments</code> folder on the contact</h3>
+  <p>Create one contact-field folder called <code>Payments</code> holding everything below. Nothing payment-related lives outside it.</p>
+</section>
+<div class="scroll">
+<table>
+  <thead><tr><th>Field</th><th>Type</th><th>Holds</th></tr></thead>
+  <tbody>
+    <tr><td><code>Lifetime Value</code></td><td>Monetary</td><td>The total of all successful payments, minus refunds and chargebacks, plus any chargebacks later won back. This is cash actually received. It is calculated from the ledger only and is never typed in.</td></tr>
+    <tr><td><code>Revenue Booked</code></td><td>Monetary</td><td>The full agreed price of everything the customer has bought, including instalments not yet paid. Taken from the product catalogue (see below).</td></tr>
+    <tr><td><code>Total Refunded</code></td><td>Monetary</td><td>Refunds plus chargebacks, as a positive number.</td></tr>
+    <tr><td><code>First Payment Date</code></td><td>Date</td><td>The date of the earliest successful payment.</td></tr>
+    <tr><td><code>Last Payment Date</code></td><td>Date</td><td>The date of the most recent successful payment.</td></tr>
+    <tr><td><code>Products Purchased</code></td><td>Multi-select</td><td>Each product bought, using the catalogue names.</td></tr>
+    <tr><td><code>Payment Review Needed</code></td><td>Checkbox</td><td>Ticked when a payment couldn't be matched to this contact with certainty (see Rule 6).</td></tr>
+  </tbody>
+</table>
+</div>
+
+<section class="prose">
+  <h3>The payment ledger</h3>
+  <p>Create a <strong>custom object</strong> called <code>Payment</code>, associated with the contact, with one record per transaction. This is the single source of truth: every field above is calculated from it. If ACTA's plan doesn't support custom objects, raise it at Checkpoint 1. Don't fall back to a text field without approval.</p>
+</section>
+<div class="scroll">
+<table>
+  <thead><tr><th>Ledger field</th><th>Holds</th></tr></thead>
+  <tbody>
+    <tr><td><code>Transaction ID</code></td><td>The platform's own ID. Must be unique, so the same transaction can never be recorded twice.</td></tr>
+    <tr><td><code>Platform</code></td><td>Whop, Commas or Kajabi.</td></tr>
+    <tr><td><code>Type</code></td><td>Payment, Refund, Chargeback or Chargeback Reversal.</td></tr>
+    <tr><td><code>Amount</code></td><td>US dollars to 2 decimals. Positive for a payment or reversal, negative for a refund or chargeback.</td></tr>
+    <tr><td><code>Date</code></td><td>When the platform recorded the transaction.</td></tr>
+    <tr><td><code>Product</code></td><td>The catalogue name.</td></tr>
+    <tr><td><code>Instalment</code></td><td>For example "2 of 3". Blank for one-off payments.</td></tr>
+    <tr><td><code>Related Transaction</code></td><td>For refunds, chargebacks and reversals: the ID of the original payment.</td></tr>
+    <tr><td><code>Payer Email</code></td><td>The email used at checkout, kept for matching and audit.</td></tr>
+    <tr><td><code>Match Method</code></td><td>Which step of Rule 6 linked this transaction to the contact.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<section class="prose">
+  <h3>Product catalogue</h3>
+  <p>A table mapping every product on every platform to one ACTA product name, its full price and its instalment structure. It drives <code>Products Purchased</code> and <code>Revenue Booked</code>. You build it in Phase 1, and Tommy approves it.</p>
+</section>
+
+<div class="part"><span class="part-n">Part two</span><h2>Rules</h2></div>
+
+<section class="prose">
+  <div class="rule">
+    <div class="row"><span class="lab">1 · Only successful money counts</span>Record successful payments, refunds, chargebacks and chargeback reversals. Failed, pending and abandoned payments are not recorded.</div>
+    <div class="row"><span class="lab">2 · Gross amounts in dollars</span>Record what the customer actually paid, before platform fees. Check each platform's units: some report cents. That mistake is already visible in today's <code>Revenue</code> field.</div>
+    <div class="row"><span class="lab">3 · Refunds and chargebacks</span>A refund is a negative entry for the amount actually refunded, so partial refunds count at the partial amount, linked to the original payment. A chargeback is a negative entry when the money is taken back. If ACTA wins the dispute, a positive Chargeback Reversal entry follows.</div>
+    <div class="row"><span class="lab">4 · No duplicates, ever</span>Processing the same transaction twice, from a re-sent event or a backfill re-run, must change nothing. The Transaction ID guarantees this.</div>
+    <div class="row"><span class="lab">5 · Opportunity value</span>Each customer's <code>Lifetime Value</code> appears on exactly <strong>one</strong> opportunity: the <code>Player Evaluation Meeting</code> opportunity if one exists, otherwise the <code>PDS Pipeline</code> opportunity (customers closed on the first call). Residency purchases count towards the same Lifetime Value. All other opportunities for that customer, including <code>PDS Confirmation &amp; Qualification</code>, are set to $0. The 303 placeholder $3,000 values are cleared to $0. Whenever Lifetime Value changes, the opportunity value updates with it.</div>
+    <div class="row"><span class="lab">6 · Matching a payment to a contact, in order</span>(a) The CRM contact ID passed through by the customer's payment link. (b) An exact email match, including the contact's additional emails. (c) An exact phone match, after normalising the format. (d) The platform's customer ID, if it's already linked to a contact. The first step that finds exactly one contact wins. <strong>Never match on name alone.</strong></div>
+    <div class="row"><span class="lab">7 · When matching is uncertain</span>If no contact matches, create one and tick <code>Payment Review Needed</code>. If two different contacts match (e.g. the email points to one contact and the phone to another), record the payment against neither: put it on a review list for Tommy, keep it out of every total, and alert. When a customer is confirmed to have paid with a second email, add that email to their contact as an additional email so future payments match automatically.</div>
+    <div class="row"><span class="lab">8 · Merging contacts</span>Merge only on approved evidence: a shared email, phone, payment-link contact ID or platform customer ID. The surviving contact keeps every ledger record from both, and its totals are recalculated immediately after the merge.</div>
+    <div class="row"><span class="lab">9 · Nothing silent</span>Any transaction that fails to write is retried automatically. If it still fails, it is logged and someone is alerted. A payment must never simply go missing.</div>
+  </div>
+</section>
+
+<div class="part"><span class="part-n">Part three</span><h2>Process</h2></div>
+
+<section class="prose">
+  <p>At each <strong>checkpoint</strong>, send Tommy the listed deliverables in writing, then stop until he approves.</p>
+
+  <h3>Phase 0 · Access and backup</h3>
+  <ol>
+    <li>Tommy provides API access to Whop, Commas and Kajabi. Ask for exactly what you need. Read-only is enough until Phase 5.</li>
+    <li>Export every contact and every opportunity, with all fields, before changing anything.</li>
+  </ol>
+
+  <h3>Phase 1 · Discovery (no changes)</h3>
+  <ol>
+    <li><strong>Find what writes <code>Revenue</code> and <code>Payment Date</code> today:</strong> the workflow, integration or app, and which platform feeds it.</li>
+    <li><strong>Payment links:</strong> do per-customer links exist, on which platforms, and does the CRM contact ID reach the platform's transaction record? Give the share of historical transactions that carry it.</li>
+    <li><strong>For each platform:</strong> how you'll pull the full transaction history; whether it sends live events for payments, refunds and chargebacks; and what units it reports amounts in.</li>
+    <li><strong>Product catalogue:</strong> every product, with price, instalment structure and your proposed ACTA product name.</li>
+    <li><strong>Your technical approach:</strong> where the logic runs (for example platform events into an automation tool, or custom code), how retries and failure alerts work, any running cost, and confirmation that custom objects are available.</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 1</span><p>Send items 1 to 5. Tommy approves the catalogue, the approach and who receives alerts.</p></div>
+
+  <h3>Phase 2 · Build the structure</h3>
+  <ol>
+    <li>Create the <code>Payments</code> folder, its fields and the <code>Payment</code> custom object exactly as specified.</li>
+  </ol>
+
+  <h3>Phase 3 · Backfill dry run (nothing written to contacts yet)</h3>
+  <ol>
+    <li>Pull every historical transaction from all three platforms and match each one using Rule 6.</li>
+    <li>Report, per platform: number of transactions and totals for payments, refunds and chargebacks. <strong>These must equal the platform's own dashboard totals exactly.</strong></li>
+    <li>Report the matching results: count per match method, the list of unmatched transactions, the list of conflicts, and any proposed merges with the evidence for each.</li>
+    <li>Give the proposed <code>Lifetime Value</code> for every customer.</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 2</span><p>Send the dry-run report. Tommy resolves the conflicts and approves the merges.</p></div>
+
+  <h3>Phase 4 · Backfill for real</h3>
+  <ol>
+    <li>Make the approved merges.</li>
+    <li>Write the ledger records, calculate every Payments field, and set opportunity values under Rule 5, including clearing duplicates and placeholders.</li>
+    <li>Run it again. Nothing should change (Rule 4).</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 3</span><p>Show three totals side by side, which must match exactly: the platforms' totals, the dry-run totals, and the CRM ledger totals. Then Tommy picks 10 customers and you show each one's CRM ledger next to their platform records.</p></div>
+
+  <h3>Phase 5 · Go live</h3>
+  <ol>
+    <li>Switch on live events from all three platforms, and switch off whatever was writing to <code>Revenue</code> and <code>Payment Date</code>.</li>
+    <li>On each platform, test a payment and a refund (and a chargeback, if the platform has a test mode). Show that the ledger record, the Payments fields and the opportunity value all update correctly within 5 minutes, and that sending the same event twice changes nothing.</li>
+  </ol>
+  <div class="flag"><span class="lab">Checkpoint 4</span><p>Send the test results.</p></div>
+
+  <h3>Phase 6 · Clean up and keep it honest</h3>
+  <ol>
+    <li>Confirm no workflow uses the six old payment fields, then delete them.</li>
+    <li>Set up a daily automatic check comparing each platform's totals with the CRM ledger for the previous day. Any difference triggers an alert to the approved recipient.</li>
+  </ol>
+  <div class="flag"><span class="lab">Final report</span><p>Send the deleted fields, the first three daily reconciliation results, and the location of the failure log.</p></div>
+</section>
+
+<div class="part"><span class="part-n">Scope</span><h2>Done means</h2></div>
+<section class="prose">
+  <ul>
+    <li>Every successful payment, refund and chargeback since ACTA started selling sits in the ledger exactly once, against the right contact.</li>
+    <li>For every customer, <code>Lifetime Value</code> and the opportunity value match the platforms to the cent, on exactly one opportunity.</li>
+    <li>New transactions appear within 5 minutes, failures are retried and alerted, and the daily check is running.</li>
+    <li>The old payment fields and the placeholder opportunity values are gone.</li>
+  </ul>
+</section>
+
+<footer>
+  ACTA Football · Payments Integration Spec · v1.0 · current state read from the live CRM, 2 October 2026
+</footer>
+
+</div>
+
+</body>
+</html>
