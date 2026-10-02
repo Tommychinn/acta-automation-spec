@@ -111,7 +111,7 @@
   <p class="standfirst">Record every successful payment, refund and chargeback from Whop, Commas and Kajabi against the right contact in the CRM. That covers all history now and every new transaction from now on. The result is one payment record per customer that everyone trusts, and an opportunity value that is exact to the cent.</p>
   <div class="meta">
     <span>Prepared for <b>ACTA Football</b></span>
-    <span>Version <b>1.2</b></span>
+    <span>Version <b>1.3</b></span>
     <span>Current state <b>read from the live CRM, 2 Oct 2026</b></span>
   </div>
 </header>
@@ -119,7 +119,7 @@
 <section class="prose">
   <h3 style="margin-top:0">The standard</h3>
   <div class="ok"><span class="lab">Non-negotiable</span>
-  <p>For every customer, <strong>Lifetime Value</strong> in the CRM must equal what the three payment platforms say that customer has paid, net of refunds and chargebacks, <strong>to the cent</strong>. The opportunity value must equal Lifetime Value. Close is not good enough. Every phase below ends with proof of this.</p></div>
+  <p>For every customer, <strong>Lifetime Value</strong> in the CRM must equal what the three payment platforms say that customer has paid, plus any manually entered payments, net of refunds and chargebacks, <strong>to the cent</strong>. The opportunity value must equal Lifetime Value. Close is not good enough. Every phase below ends with proof of this.</p></div>
   <p>Anything in <code>this typeface</code> is a literal value in the CRM. All amounts are US dollars.</p>
 </section>
 
@@ -179,8 +179,11 @@
 <table>
   <thead><tr><th>Ledger field</th><th>Holds</th></tr></thead>
   <tbody>
-    <tr><td><code>Transaction ID</code></td><td>The platform's own ID. Must be unique, so the same transaction can never be recorded twice.</td></tr>
-    <tr><td><code>Platform</code></td><td>Whop, Commas or Kajabi.</td></tr>
+    <tr><td><code>Transaction ID</code></td><td>The platform's own ID, or a unique ID generated automatically for manual entries. Must be unique, so the same transaction can never be recorded twice.</td></tr>
+    <tr><td><code>Platform</code></td><td>Whop, Commas, Kajabi or Manual.</td></tr>
+    <tr><td><code>Method</code></td><td>For manual entries: Bank Transfer, Cash or Other. Filled automatically for platform payments.</td></tr>
+    <tr><td><code>Reference</code></td><td>For manual entries: the bank reference or receipt number. Required.</td></tr>
+    <tr><td><code>Entered By</code></td><td>The CRM user who created a manual entry. Blank for platform payments.</td></tr>
     <tr><td><code>Type</code></td><td>Payment, Refund, Chargeback or Chargeback Reversal.</td></tr>
     <tr><td><code>Amount</code></td><td>US dollars to 2 decimals. Positive for a payment or reversal, negative for a refund or chargeback.</td></tr>
     <tr><td><code>Date</code></td><td>When the platform recorded the transaction.</td></tr>
@@ -210,7 +213,8 @@
     <div class="row"><span class="lab">6 · Matching a payment to a contact, in order</span>(a) The CRM contact ID passed through by the customer's payment link. (b) An exact email match, including the contact's additional emails. (c) An exact phone match, after normalising the format. (d) The platform's customer ID, if it's already linked to a contact. The first step that finds exactly one contact wins. <strong>Never match on name alone.</strong></div>
     <div class="row"><span class="lab">7 · When matching is uncertain</span>If no contact matches, create one and tick <code>Payment Review Needed</code>. If two different contacts match (e.g. the email points to one contact and the phone to another), record the payment against neither: put it on a review list for Tommy, keep it out of every total, and alert. When a customer is confirmed to have paid with a second email, add that email to their contact as an additional email so future payments match automatically.</div>
     <div class="row"><span class="lab">8 · Merging contacts</span>Merge only on approved evidence: a shared email, phone, payment-link contact ID or platform customer ID. The surviving contact keeps every ledger record from both, and its totals are recalculated immediately after the merge.</div>
-    <div class="row"><span class="lab">9 · Nothing silent</span>Any transaction that fails to write is retried automatically. If it still fails, it is logged and someone is alerted. A payment must never simply go missing.</div>
+    <div class="row"><span class="lab">9 · Manual payments</span>For payments that never pass through Whop, Commas or Kajabi (bank transfer, cash, other), a rep adds a <code>Payment</code> record on the contact by hand: date, amount, type, product, method and reference are all required. A manual entry recalculates the Payments fields and the opportunity value exactly as a platform payment does. Reps must never manually enter a payment that went through a platform, because it would be counted twice. Manual refunds work the same way, linked to the original payment.</div>
+    <div class="row"><span class="lab">10 · Nothing silent</span>Any transaction that fails to write is retried automatically. If it still fails, it is logged and someone is alerted. A payment must never simply go missing.</div>
   </div>
 </section>
 
@@ -260,14 +264,15 @@
   <h3>Phase 5 · Go live</h3>
   <ol>
     <li>Switch on live events from all three platforms, and switch off whatever was writing to <code>Revenue</code> and <code>Payment Date</code>.</li>
-    <li>On each platform, test a payment and a refund (and a chargeback, if the platform has a test mode). Show that the ledger record, the Payments fields and the opportunity value all update correctly within 5 minutes, and that sending the same event twice changes nothing.</li>
+    <li>On each platform, test a payment and a refund (and a chargeback, if the platform has a test mode). Also test one manual entry and one manual refund. Show that the ledger record, the Payments fields and the opportunity value all update correctly within 5 minutes, and that sending the same event twice changes nothing.</li>
   </ol>
   <div class="flag"><span class="lab">Checkpoint 4</span><p>Send the test results.</p></div>
 
   <h3>Phase 6 · Clean up and keep it honest</h3>
   <ol>
     <li>Confirm no workflow uses the six old payment fields, then delete them.</li>
-    <li>Set up a daily automatic check comparing each platform's totals with the CRM ledger for the previous day. Any difference triggers an alert to the approved recipient.</li>
+    <li>Set up a daily automatic check comparing each platform's totals with the CRM ledger for the previous day. Any difference triggers an alert to the approved recipient. The same daily report lists every new manual entry (who entered it, amount, reference) so a manager can verify it against the bank.</li>
+    <li>Write a one-page guide for reps on recording a manual payment, and on when not to.</li>
   </ol>
   <div class="flag"><span class="lab">Final report</span><p>Send the deleted fields, the first three daily reconciliation results, and the location of the failure log.</p></div>
 </section>
@@ -278,12 +283,13 @@
     <li>Every successful payment, refund and chargeback since ACTA started selling sits in the ledger exactly once, against the right contact.</li>
     <li>For every customer, <code>Lifetime Value</code> and the opportunity value match the platforms to the cent, on exactly one opportunity.</li>
     <li>New transactions appear within 5 minutes, failures are retried and alerted, and the daily check is running.</li>
+    <li>Reps can record a bank transfer or other off-platform payment on the contact, and it flows into every total.</li>
     <li>The old payment fields and the placeholder opportunity values are gone.</li>
   </ul>
 </section>
 
 <footer>
-  ACTA Football · Payments Integration Spec · v1.2 · current state read from the live CRM, 2 October 2026
+  ACTA Football · Payments Integration Spec · v1.3 · current state read from the live CRM, 2 October 2026
 </footer>
 
 </div>
