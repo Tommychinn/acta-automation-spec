@@ -108,18 +108,18 @@
 <header class="mast">
   <p class="eyebrow">ACTA Football · GoHighLevel</p>
   <h1>Payments Integration Spec</h1>
-  <p class="standfirst">Record every successful payment, refund and chargeback from Whop, Commas and Kajabi against the right contact in the CRM. That covers all history now and every new transaction from now on. The result is one payment record per customer that everyone trusts, and an opportunity value that is exact to the cent.</p>
+  <p class="standfirst">Record every payment from Whop, Commas (formerly Fanbasis) and Kajabi, plus manually entered ones, against the right contact in the CRM. That covers all history now and every new transaction from now on. The result is one payment ledger per customer that everyone trusts, and an opportunity value that is exact to the cent.</p>
   <div class="meta">
     <span>Prepared for <b>ACTA Football</b></span>
-    <span>Version <b>1.3</b></span>
+    <span>Version <b>2.0</b></span>
     <span>Current state <b>read from the live CRM, 2 Oct 2026</b></span>
   </div>
 </header>
 
 <section class="prose">
-  <h3 style="margin-top:0">The standard</h3>
+  <h3 style="margin-top:0">The one rule everything serves</h3>
   <div class="ok"><span class="lab">Non-negotiable</span>
-  <p>For every customer, <strong>Lifetime Value</strong> in the CRM must equal what the three payment platforms say that customer has paid, plus any manually entered payments, net of refunds and chargebacks, <strong>to the cent</strong>. The opportunity value must equal Lifetime Value. Close is not good enough. Every phase below ends with proof of this.</p></div>
+  <p><strong>The sum of a customer's ledger = their <code>Lifetime Value</code> = the value of their opportunity.</strong> All three are always the same number, to the cent, and all three match what the payment processors and manual entries show. Every phase below ends with proof of this.</p></div>
   <p>Anything in <code>this typeface</code> is a literal value in the CRM. All amounts are US dollars.</p>
 </section>
 
@@ -133,88 +133,103 @@
 <table>
   <thead><tr><th>Field</th><th>Contacts with data</th><th>Notes</th></tr></thead>
   <tbody>
-    <tr><td><code>Revenue</code></td><td>46</td><td><strong>An existing connection is writing to it right now.</strong> The newest entry is 2 Oct 2026. Every value lines up with a <code>purchased-…</code> product tag on the same contact (e.g. <code>4700</code> ↔ <code>purchased-the confidence accelerator</code>), so it is almost certainly a payment platform integration, not manual entry. The source is unknown. The units are mixed: <code>4700</code> appears 30 times (probably $47.00 recorded in cents), <code>599700</code> means $5,997 in cents, yet <code>5997</code> elsewhere means $5,997 in dollars.</td></tr>
-    <tr><td><code>Payment Date</code></td><td>44</td><td>Same contacts and same live source as Revenue.</td></tr>
-    <tr><td><code>Payment Method</code>, <code>Payment Plan</code>, <code>Deposit Amount</code>, <code>Cash Collected</code></td><td>0</td><td>Empty. Delete in Phase 6.</td></tr>
+    <tr><td><code>Revenue</code></td><td>46</td><td><strong>Something is writing to it right now</strong>, probably a Zapier zap. The newest entry is 2 Oct 2026. Every value lines up with a <code>purchased-…</code> product tag on the same contact (e.g. <code>4700</code> ↔ <code>purchased-the confidence accelerator</code>). The units are mixed: <code>4700</code> is probably $47.00 written in cents, <code>599700</code> means $5,997 in cents, yet <code>5997</code> elsewhere means $5,997 in dollars.</td></tr>
+    <tr><td><code>Payment Date</code></td><td>44</td><td>Same contacts and same source as Revenue.</td></tr>
+    <tr><td><code>Payment Method</code>, <code>Payment Plan</code>, <code>Deposit Amount</code>, <code>Cash Collected</code></td><td>0</td><td>Empty.</td></tr>
   </tbody>
 </table>
 </div>
 
 <section class="prose">
+  <p>All six old fields are replaced by the new <code>Payments</code> folder and deleted at the end (Phase 6). Whatever writes to them is switched off at go-live (Phase 5).</p>
   <h3>Opportunity values</h3>
   <ul>
     <li>Customers are marked Won in several pipelines at once, and some carry the full deal value in each. One customer shows $5,997 in three pipelines, so they count as $17,991 in any total.</li>
     <li>303 open opportunities in <code>PDS AI SDR Lead Pipeline P&amp;O</code> carry a placeholder <code>$3,000</code>. That is not real money.</li>
   </ul>
   <h3>Payment links</h3>
-  <p>A previous specialist may already have set up a payment link for each customer that tells the platform which CRM contact is paying. Confirm whether this exists and how far it reaches before building any matching logic (Phase 1).</p>
+  <p>A previous specialist may already have set up a payment link for each customer that tells the processor which CRM contact is paying. Whop and Commas can both carry a CRM contact ID through checkout. Confirm what exists before building any matching logic (Phase 1).</p>
 </section>
 
 <div class="part"><span class="part-n">Part one</span><h2>What to build</h2></div>
 
 <section class="prose">
   <h3>A <code>Payments</code> folder on the contact</h3>
-  <p>Create one contact-field folder called <code>Payments</code> holding everything below. Nothing payment-related lives outside it.</p>
+  <p>One contact-field folder called <code>Payments</code> holds everything below. Nothing payment-related lives outside it.</p>
 </section>
 <div class="scroll">
 <table>
   <thead><tr><th>Field</th><th>Type</th><th>Holds</th></tr></thead>
   <tbody>
-    <tr><td><code>Lifetime Value</code></td><td>Monetary</td><td>The total of all successful payments, minus refunds and chargebacks, plus any chargebacks later won back. This is cash actually received. It is calculated from the ledger only and is never typed in.</td></tr>
-    <tr><td><code>Revenue Booked</code></td><td>Monetary</td><td>The full agreed price of everything the customer has bought, including instalments not yet paid. Taken from the product catalogue (see below).</td></tr>
+    <tr><td><code>Lifetime Value</code></td><td>Monetary</td><td>The sum of the ledger: successful payments minus refunds and chargebacks. Calculated automatically, never typed. The opportunity value mirrors it.</td></tr>
+    <tr><td><code>Revenue Booked</code></td><td>Monetary</td><td>The full agreed price of everything bought, including instalments still to come, taken from the processor's plan or order total.</td></tr>
     <tr><td><code>Total Refunded</code></td><td>Monetary</td><td>Refunds plus chargebacks, as a positive number.</td></tr>
-    <tr><td><code>First Payment Date</code></td><td>Date</td><td>The date of the earliest successful payment.</td></tr>
-    <tr><td><code>Last Payment Date</code></td><td>Date</td><td>The date of the most recent successful payment.</td></tr>
-    <tr><td><code>Products Purchased</code></td><td>Multi-select</td><td>Each product bought, using the catalogue names.</td></tr>
-    <tr><td><code>Payment Review Needed</code></td><td>Checkbox</td><td>Ticked when a payment couldn't be matched to this contact with certainty (see Rule 6).</td></tr>
+    <tr><td><code>First Payment Date</code> / <code>Last Payment Date</code></td><td>Date</td><td>The dates of the earliest and latest successful payments.</td></tr>
+    <tr><td><code>Products Purchased</code></td><td>Multi-select</td><td>Each product category bought (see Product mapping).</td></tr>
+    <tr><td><code>Failed Payments</code></td><td>Number</td><td>Failed payment attempts that haven't been followed by a successful payment.</td></tr>
   </tbody>
 </table>
 </div>
 
 <section class="prose">
-  <h3>The payment ledger</h3>
-  <p>Create a <strong>custom object</strong> called <code>Payment</code>, associated with the contact, with one record per transaction. Each payment is its own record, like a row in a table, not a separate custom field. The contact page lists them one after another, and the structure is identical whether a customer has 1 payment or 50. This is the single source of truth: every field above is calculated from it. If ACTA's plan doesn't support custom objects, raise it at Checkpoint 1. Don't fall back to a text field without approval.</p>
+  <h3>The ledger</h3>
+  <p>Create a <strong>custom object</strong> called <code>Payment</code>, associated with the contact. Each transaction is one record, like a row in a table, not a separate custom field. The contact page lists the records one after another, with an identical structure whether a customer has 1 payment or 50. Records can be created by the integration or by a rep by hand (Rule 6). If ACTA's plan doesn't support custom objects, raise it at Checkpoint 1.</p>
 </section>
 <div class="scroll">
 <table>
   <thead><tr><th>Ledger field</th><th>Holds</th></tr></thead>
   <tbody>
-    <tr><td><code>Transaction ID</code></td><td>The platform's own ID, or a unique ID generated automatically for manual entries. Must be unique, so the same transaction can never be recorded twice.</td></tr>
-    <tr><td><code>Platform</code></td><td>Whop, Commas, Kajabi or Manual.</td></tr>
-    <tr><td><code>Method</code></td><td>For manual entries: Bank Transfer, Cash or Other. Filled automatically for platform payments.</td></tr>
-    <tr><td><code>Reference</code></td><td>For manual entries: the bank reference or receipt number. Required.</td></tr>
-    <tr><td><code>Entered By</code></td><td>The CRM user who created a manual entry. Blank for platform payments.</td></tr>
-    <tr><td><code>Type</code></td><td>Payment, Refund, Chargeback or Chargeback Reversal.</td></tr>
-    <tr><td><code>Amount</code></td><td>US dollars to 2 decimals. Positive for a payment or reversal, negative for a refund or chargeback.</td></tr>
-    <tr><td><code>Date</code></td><td>When the platform recorded the transaction.</td></tr>
-    <tr><td><code>Product</code></td><td>The catalogue name.</td></tr>
+    <tr><td><code>Transaction ID</code></td><td>The processor's own ID, or a generated one for manual entries. Unique, so nothing is recorded twice.</td></tr>
+    <tr><td><code>Processor</code></td><td>Whop, Commas, Kajabi or Manual.</td></tr>
+    <tr><td><code>Type</code></td><td>Payment, Refund or Chargeback.</td></tr>
+    <tr><td><code>Status</code></td><td>Succeeded or Failed. Only succeeded records count towards any total.</td></tr>
+    <tr><td><code>Amount</code></td><td>US dollars to 2 decimals. Positive for payments, negative for refunds and chargebacks.</td></tr>
+    <tr><td><code>Date</code></td><td>When the processor recorded it.</td></tr>
+    <tr><td><code>Product</code></td><td>The product name exactly as the processor shows it.</td></tr>
+    <tr><td><code>Product Category</code></td><td>The mapped category (see Product mapping).</td></tr>
     <tr><td><code>Instalment</code></td><td>For example "2 of 3". Blank for one-off payments.</td></tr>
-    <tr><td><code>Related Transaction</code></td><td>For refunds, chargebacks and reversals: the ID of the original payment.</td></tr>
-    <tr><td><code>Payer Email</code></td><td>The email used at checkout, kept for matching and audit.</td></tr>
-    <tr><td><code>Match Method</code></td><td>Which step of Rule 6 linked this transaction to the contact.</td></tr>
+    <tr><td><code>Payment Method</code></td><td>Card, PayPal, Apple Pay, Google Pay, Splitit, ClarityPay, Klarna, Affirm, Bank Transfer, Cash, etc., as specifically as the processor reports it.</td></tr>
+    <tr><td><code>Card Brand</code> / <code>Card Last 4</code></td><td>Where the processor provides them.</td></tr>
+    <tr><td><code>Failure Reason</code></td><td>For failed payments, e.g. insufficient funds or expired card, with the decline code if one is given.</td></tr>
+    <tr><td><code>Related Transaction</code></td><td>For refunds and chargebacks: the ID of the original payment.</td></tr>
+    <tr><td><code>Payer Name</code> / <code>Payer Email</code> / <code>Payer Phone</code></td><td>As entered at checkout. Kept for matching and audit.</td></tr>
+    <tr><td><code>Reference</code></td><td>Manual entries only: the bank reference or receipt number.</td></tr>
+    <tr><td><code>Entered By</code></td><td>Manual entries only: the CRM user who created it.</td></tr>
+    <tr><td><code>Match Method</code></td><td>How the record was linked to the contact (Rule 4).</td></tr>
   </tbody>
 </table>
 </div>
 
 <section class="prose">
-  <h3>Product catalogue</h3>
-  <p>A table mapping every product on every platform to one ACTA product name, its full price and its instalment structure. It drives <code>Products Purchased</code> and <code>Revenue Booked</code>. You build it in Phase 1, and Tommy approves it.</p>
+  <p>In Phase 1, map each processor's fields onto these ledger fields. Anything a processor provides that isn't listed and is useful, propose adding it.</p>
+
+  <h3>Product mapping</h3>
+  <p>A short lookup table, not a price list. Each product name as it appears in each processor maps to one high-level category. Wording varies between processors, and prices change, so the mapping is by name only. Prices always come from the actual transaction.</p>
 </section>
+<div class="scroll">
+<table>
+  <thead><tr><th>Category</th><th>Covers</th></tr></thead>
+  <tbody>
+    <tr><td><code>ACTA One</code></td><td>Every ACTA One product, offer or pricing variant</td></tr>
+    <tr><td><code>ACTA Elite</code></td><td>Every ACTA Elite variant</td></tr>
+    <tr><td><code>ACTA Pro</code></td><td>Every ACTA Pro variant</td></tr>
+    <tr><td><code>Residency</code></td><td>Residency deposits and participation</td></tr>
+    <tr><td><code>Other</code></td><td>Lower-ticket products such as The Confidence Accelerator and the 2 Day Camp</td></tr>
+  </tbody>
+</table>
+</div>
 
 <div class="part"><span class="part-n">Part two</span><h2>Rules</h2></div>
 
 <section class="prose">
   <div class="rule">
-    <div class="row"><span class="lab">1 · Only successful money counts</span>Record successful payments, refunds, chargebacks and chargeback reversals. Failed, pending and abandoned payments are not recorded.</div>
-    <div class="row"><span class="lab">2 · Gross amounts in dollars</span>Record what the customer actually paid, before platform fees. Check each platform's units: some report cents. That mistake is already visible in today's <code>Revenue</code> field.</div>
-    <div class="row"><span class="lab">3 · Refunds and chargebacks</span>A refund is a negative entry for the amount actually refunded, so partial refunds count at the partial amount, linked to the original payment. A chargeback is a negative entry when the money is taken back. If ACTA wins the dispute, a positive Chargeback Reversal entry follows.</div>
-    <div class="row"><span class="lab">4 · No duplicates, ever</span>Processing the same transaction twice, from a re-sent event or a backfill re-run, must change nothing. The Transaction ID guarantees this.</div>
-    <div class="row"><span class="lab">5 · Opportunity value</span>Each customer's <code>Lifetime Value</code> appears on exactly <strong>one</strong> opportunity: the <code>Player Evaluation Meeting</code> opportunity if one exists, otherwise the <code>PDS Pipeline</code> opportunity (customers closed on the first call). Residency purchases count towards the same Lifetime Value. All other opportunities for that customer, including <code>PDS Confirmation &amp; Qualification</code>, are set to $0. The 303 placeholder $3,000 values are cleared to $0. Whenever Lifetime Value changes, the opportunity value updates with it.</div>
-    <div class="row"><span class="lab">6 · Matching a payment to a contact, in order</span>(a) The CRM contact ID passed through by the customer's payment link. (b) An exact email match, including the contact's additional emails. (c) An exact phone match, after normalising the format. (d) The platform's customer ID, if it's already linked to a contact. The first step that finds exactly one contact wins. <strong>Never match on name alone.</strong></div>
-    <div class="row"><span class="lab">7 · When matching is uncertain</span>If no contact matches, create one and tick <code>Payment Review Needed</code>. If two different contacts match (e.g. the email points to one contact and the phone to another), record the payment against neither: put it on a review list for Tommy, keep it out of every total, and alert. When a customer is confirmed to have paid with a second email, add that email to their contact as an additional email so future payments match automatically.</div>
-    <div class="row"><span class="lab">8 · Merging contacts</span>Merge only on approved evidence: a shared email, phone, payment-link contact ID or platform customer ID. The surviving contact keeps every ledger record from both, and its totals are recalculated immediately after the merge.</div>
-    <div class="row"><span class="lab">9 · Manual payments</span>For payments that never pass through Whop, Commas or Kajabi (bank transfer, cash, other), a rep adds a <code>Payment</code> record on the contact by hand: date, amount, type, product, method and reference are all required. A manual entry recalculates the Payments fields and the opportunity value exactly as a platform payment does. Reps must never manually enter a payment that went through a platform, because it would be counted twice. Manual refunds work the same way, linked to the original payment.</div>
-    <div class="row"><span class="lab">10 · Nothing silent</span>Any transaction that fails to write is retried automatically. If it still fails, it is logged and someone is alerted. A payment must never simply go missing.</div>
+    <div class="row"><span class="lab">1 · Ledger = Lifetime Value = opportunity value</span>The ledger mirrors the processors' transaction flow exactly: every payment, failed attempt, refund and chargeback as each processor records it. <code>Lifetime Value</code> is the sum of its succeeded records, and the opportunity value is set to the same number. If the three ever differ, that is a defect.</div>
+    <div class="row"><span class="lab">2 · Which opportunity</span>The value goes on exactly one opportunity per customer: the <code>Player Evaluation Meeting</code> opportunity if one exists, otherwise the <code>PDS Pipeline</code> opportunity (customers closed on the first call). Every other opportunity for that customer, including <code>PDS Confirmation &amp; Qualification</code>, is set to $0. The 303 placeholder $3,000 values are cleared to $0.</div>
+    <div class="row"><span class="lab">3 · One unit, no duplicates</span>The processors report amounts differently. Whop and Commas use dollars, Kajabi uses cents, and Commas sends some prices as text. Convert everything to dollars on the way in. Processing the same transaction twice, from a re-sent event or a backfill re-run, must change nothing.</div>
+    <div class="row"><span class="lab">4 · Matching a payment to a contact</span>In order: (a) the CRM contact ID passed through the payment link; (b) an exact email match, including additional emails; (c) an exact phone match; (d) the processor customer ID already linked to a contact. The first step that finds exactly one contact wins. <strong>Never match on name alone.</strong> Anything else goes to reconciliation (Phase 3) and stays out of every total until it's resolved.</div>
+    <div class="row"><span class="lab">5 · Second emails and merges</span>When a customer is confirmed to have paid with a second email, add it to their contact as an additional email so future payments match automatically. Merge two contacts only when Tommy approves. The surviving contact keeps every ledger record from both, and its totals are recalculated.</div>
+    <div class="row"><span class="lab">6 · Manual payments</span>For bank transfers, cash and anything else that never passed through a processor, a rep adds a <code>Payment</code> record by hand. Date, amount, product, method and reference are all required. It counts exactly like any other payment. Never enter manually a payment that went through a processor, because it would be counted twice.</div>
+    <div class="row"><span class="lab">7 · Nothing silent</span>A transaction that fails to write is retried, then logged and alerted. Commas does not resend missed events and Kajabi sends no refund or failure events at all, so the daily check (Phase 6) is the safety net, not an extra.</div>
   </div>
 </section>
 
@@ -225,71 +240,78 @@
 
   <h3>Phase 0 · Access and backup</h3>
   <ol>
-    <li>Tommy provides API access to Whop, Commas and Kajabi. Ask for exactly what you need. Read-only is enough until Phase 5.</li>
+    <li>Tommy provides API access to Whop, Commas and Kajabi. Ask for exactly what you need.</li>
     <li>Export every contact and every opportunity, with all fields, before changing anything.</li>
   </ol>
 
   <h3>Phase 1 · Discovery (no changes)</h3>
   <ol>
-    <li><strong>Find what writes <code>Revenue</code>, <code>Payment Date</code> and the <code>purchased-…</code> tags today:</strong> the integration, app or workflow, which platform it serves, and why units differ between products. Check the sub-account's audit logs for what or who is making the changes. List everything else that relies on it, so nothing breaks when it's switched off. The <code>purchased-…</code> tags must keep being applied: replace that function, don't lose it.</li>
-    <li><strong>Payment links:</strong> do per-customer links exist, on which platforms, and does the CRM contact ID reach the platform's transaction record? Give the share of historical transactions that carry it.</li>
-    <li><strong>For each platform:</strong> how you'll pull the full transaction history; whether it sends live events for payments, refunds and chargebacks; and what units it reports amounts in.</li>
-    <li><strong>Product catalogue:</strong> every product, with price, instalment structure and your proposed ACTA product name.</li>
-    <li><strong>Your technical approach:</strong> where the logic runs (for example platform events into an automation tool, or custom code), how retries and failure alerts work, any running cost, and confirmation that custom objects are available.</li>
+    <li><strong>What writes the old fields.</strong> Find what fills <code>Revenue</code>, <code>Payment Date</code> and the <code>purchased-…</code> tags (believed to be a Zapier zap). Check the sub-account's audit logs. List everything that relies on it. The <code>purchased-…</code> tags must keep being applied after switch-off: replace that job, don't lose it.</li>
+    <li><strong>Payment links.</strong> Do per-customer links exist, on which processors, and does the CRM contact ID reach the transaction? Give the share of historical transactions that carry it.</li>
+    <li><strong>Field mapping.</strong> For each processor, show how its data maps to every ledger field, and flag any gaps. Known gaps to plan around: Kajabi gives no failed payments, no refund or dispute events, and no card details; Commas' history has no date filter and no payment method; only Whop gives card last 4 on every payment. Confirm whether Kajabi takes payments through Kajabi Payments or ACTA's own Stripe or PayPal, because failure and card detail may have to come from there.</li>
+    <li><strong>Payer details.</strong> Confirm whether each processor gives name, email and phone on every payment. Where one doesn't, say how missing details will be collected when a new contact is created.</li>
+    <li><strong>Product mapping.</strong> List every product name on every processor with its proposed category.</li>
+    <li><strong>Your technical approach:</strong> where the logic runs, how retries and alerts work, any running cost, and confirmation that custom objects are available.</li>
   </ol>
-  <div class="flag"><span class="lab">Checkpoint 1</span><p>Send items 1 to 5. Tommy approves the catalogue, the approach and who receives alerts.</p></div>
+  <div class="flag"><span class="lab">Checkpoint 1</span><p>Send items 1 to 6. Tommy approves the mapping, the approach and who receives alerts.</p></div>
 
   <h3>Phase 2 · Build the structure</h3>
   <ol>
-    <li>Create the <code>Payments</code> folder, its fields and the <code>Payment</code> custom object exactly as specified.</li>
+    <li>Create the <code>Payments</code> folder, its fields and the <code>Payment</code> custom object as specified and approved.</li>
   </ol>
 
-  <h3>Phase 3 · Backfill dry run (nothing written to contacts yet)</h3>
+  <h3>Phase 3 · Backfill dry run and reconciliation (nothing written to contacts yet)</h3>
   <ol>
-    <li>Pull every historical transaction from all three platforms and match each one using Rule 6.</li>
-    <li>Report, per platform: number of transactions and totals for payments, refunds and chargebacks. <strong>These must equal the platform's own dashboard totals exactly.</strong></li>
-    <li>Report the matching results: count per match method, the list of unmatched transactions, the list of conflicts, and any proposed merges with the evidence for each.</li>
-    <li>Give the proposed <code>Lifetime Value</code> for every customer.</li>
+    <li>Pull every historical transaction from all three processors and match each one using Rule 4.</li>
+    <li>Per processor, report the transaction count and the totals for payments, refunds and chargebacks. <strong>These must equal the processor's own dashboard totals exactly.</strong></li>
+    <li>Build the <strong>reconciliation sheet</strong> with one row per payer (not per payment), so one decision covers all of that person's payments. Show: the payer's name, email and phone as the processor shows them; their payments (dates, amounts, products); the proposed CRM contact (name, email, link) or "no match found"; and how the match was made. Rows matched by contact ID or exact email are pre-filled as confirmed, for a quick scan. All other rows are left blank for Tommy.</li>
+    <li>For each row, Tommy picks one outcome:
+      <ul>
+        <li><strong>Yes</strong>: this is the right contact.</li>
+        <li><strong>No, it's this contact instead</strong>: Tommy gives the right one.</li>
+        <li><strong>No contact exists</strong>: create one from the payer's details, adding any that are missing.</li>
+      </ul>
+      A spreadsheet is fine. If you have a better interface for making these decisions quickly, propose it.</li>
+    <li>Give the resulting <code>Lifetime Value</code> for every customer.</li>
   </ol>
-  <div class="flag"><span class="lab">Checkpoint 2</span><p>Send the dry-run report. Tommy resolves the conflicts and approves the merges.</p></div>
+  <div class="flag"><span class="lab">Checkpoint 2</span><p>Send the dry-run totals and the reconciliation sheet. Tommy completes the sheet. Nothing is written until every row has an outcome.</p></div>
 
   <h3>Phase 4 · Backfill for real</h3>
   <ol>
-    <li>Make the approved merges.</li>
-    <li>Write the ledger records, calculate every Payments field, and set opportunity values under Rule 5, including clearing duplicates and placeholders.</li>
-    <li>Run it again. Nothing should change (Rule 4).</li>
+    <li>Apply the reconciliation outcomes: create the new contacts, add the second emails and make the approved merges.</li>
+    <li>Write the ledger, calculate every Payments field, and set opportunity values under Rule 2, including clearing duplicates and placeholders.</li>
+    <li>Run it again. Nothing should change (Rule 3).</li>
   </ol>
-  <div class="flag"><span class="lab">Checkpoint 3</span><p>Show three totals side by side, which must match exactly: the platforms' totals, the dry-run totals, and the CRM ledger totals. Then Tommy picks 10 customers and you show each one's CRM ledger next to their platform records.</p></div>
+  <div class="flag"><span class="lab">Checkpoint 3</span><p>Show three totals side by side, which must match exactly: the processors' totals, the dry-run totals, and the CRM ledger totals. Then Tommy picks 10 customers and you show each one's ledger next to their processor records.</p></div>
 
   <h3>Phase 5 · Go live</h3>
   <ol>
-    <li>Switch on live events from all three platforms, and switch off whatever was writing to <code>Revenue</code> and <code>Payment Date</code>.</li>
-    <li>On each platform, test a payment and a refund (and a chargeback, if the platform has a test mode). Also test one manual entry and one manual refund. Show that the ledger record, the Payments fields and the opportunity value all update correctly within 5 minutes, and that sending the same event twice changes nothing.</li>
+    <li>Switch on live updates from all three processors, and switch off whatever was writing the old fields (making sure the <code>purchased-…</code> tags still get applied).</li>
+    <li>Test each processor: a payment, a failed payment and a refund (and a chargeback, if there's a test mode). Then test one manual payment and one manual refund. Show that the ledger, the Payments fields and the opportunity value all update within 5 minutes, and that a repeated event changes nothing.</li>
   </ol>
   <div class="flag"><span class="lab">Checkpoint 4</span><p>Send the test results.</p></div>
 
   <h3>Phase 6 · Clean up and keep it honest</h3>
   <ol>
     <li>Confirm no workflow uses the six old payment fields, then delete them.</li>
-    <li>Set up a daily automatic check comparing each platform's totals with the CRM ledger for the previous day. Any difference triggers an alert to the approved recipient. The same daily report lists every new manual entry (who entered it, amount, reference) so a manager can verify it against the bank.</li>
+    <li>Set up a daily automatic check that pulls the previous day's transactions from each processor and compares them with the ledger. It adds anything missing, such as a missed event or a Kajabi refund, and alerts on any difference it can't resolve. The same daily report lists every new manual entry (who, amount, reference) for a manager to verify against the bank.</li>
     <li>Write a one-page guide for reps on recording a manual payment, and on when not to.</li>
   </ol>
-  <div class="flag"><span class="lab">Final report</span><p>Send the deleted fields, the first three daily reconciliation results, and the location of the failure log.</p></div>
+  <div class="flag"><span class="lab">Final report</span><p>Send the deleted fields, the first three daily check results, the rep guide and the location of the failure log.</p></div>
 </section>
 
 <div class="part"><span class="part-n">Scope</span><h2>Done means</h2></div>
 <section class="prose">
   <ul>
-    <li>Every successful payment, refund and chargeback since ACTA started selling sits in the ledger exactly once, against the right contact.</li>
-    <li>For every customer, <code>Lifetime Value</code> and the opportunity value match the platforms to the cent, on exactly one opportunity.</li>
-    <li>New transactions appear within 5 minutes, failures are retried and alerted, and the daily check is running.</li>
-    <li>Reps can record a bank transfer or other off-platform payment on the contact, and it flows into every total.</li>
-    <li>The old payment fields and the placeholder opportunity values are gone.</li>
+    <li>Every payment, failed attempt, refund and chargeback since ACTA started selling sits in the ledger exactly once, against the right contact.</li>
+    <li>For every customer, ledger sum = <code>Lifetime Value</code> = opportunity value, on exactly one opportunity, matching the processors to the cent.</li>
+    <li>New transactions appear within 5 minutes, the daily check catches anything missed, and reps can record off-processor payments.</li>
+    <li>The old payment fields and placeholder opportunity values are gone, and the <code>purchased-…</code> tags still work.</li>
   </ul>
 </section>
 
 <footer>
-  ACTA Football · Payments Integration Spec · v1.3 · current state read from the live CRM, 2 October 2026
+  ACTA Football · Payments Integration Spec · v2.0 · current state read from the live CRM, 2 October 2026; processor capabilities from each processor's public API documentation
 </footer>
 
 </div>
