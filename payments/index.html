@@ -111,7 +111,7 @@
   <p class="standfirst">Record every payment from Whop, Commas (formerly Fanbasis) and Kajabi, plus manually entered ones, against the right contact in the CRM. That covers all history now and every new transaction from now on. The result is one payment ledger per customer that everyone trusts, and an opportunity value that is exact to the cent.</p>
   <div class="meta">
     <span>Prepared for <b>ACTA Football</b></span>
-    <span>Version <b>2.0</b></span>
+    <span>Version <b>2.1</b></span>
     <span>Current state <b>read from the live CRM, 2 Oct 2026</b></span>
   </div>
 </header>
@@ -141,14 +141,14 @@
 </div>
 
 <section class="prose">
-  <p>All six old fields are replaced by the new <code>Payments</code> folder and deleted at the end (Phase 6). Whatever writes to them is switched off at go-live (Phase 5).</p>
+  <p>All six old fields are replaced by the new <code>Payments</code> folder. Whatever writes to them is switched off at go-live (Phase 5). <strong>Their data is not touched until the very last step</strong>, after it has been checked against the new ledger (Phase 7).</p>
   <h3>Opportunity values</h3>
   <ul>
     <li>Customers are marked Won in several pipelines at once, and some carry the full deal value in each. One customer shows $5,997 in three pipelines, so they count as $17,991 in any total.</li>
     <li>303 open opportunities in <code>PDS AI SDR Lead Pipeline P&amp;O</code> carry a placeholder <code>$3,000</code>. That is not real money.</li>
   </ul>
   <h3>Payment links</h3>
-  <p>A previous specialist may already have set up a payment link for each customer that tells the processor which CRM contact is paying. Whop and Commas can both carry a CRM contact ID through checkout. Confirm what exists before building any matching logic (Phase 1).</p>
+  <p>You have already set up a payment link for each customer. Whop and Commas can both carry the CRM contact ID through checkout into the transaction. Confirm how far your links do this, because it is the most reliable way to match payments (Rule 4a).</p>
 </section>
 
 <div class="part"><span class="part-n">Part one</span><h2>What to build</h2></div>
@@ -247,7 +247,7 @@
   <h3>Phase 1 · Discovery (no changes)</h3>
   <ol>
     <li><strong>What writes the old fields.</strong> Find what fills <code>Revenue</code>, <code>Payment Date</code> and the <code>purchased-…</code> tags (believed to be a Zapier zap). Check the sub-account's audit logs. List everything that relies on it. The <code>purchased-…</code> tags must keep being applied after switch-off: replace that job, don't lose it.</li>
-    <li><strong>Payment links.</strong> Do per-customer links exist, on which processors, and does the CRM contact ID reach the transaction? Give the share of historical transactions that carry it.</li>
+    <li><strong>Payment links.</strong> For the per-customer links you set up: which processors they cover, whether the CRM contact ID reaches each transaction, and what share of historical transactions carry it.</li>
     <li><strong>Field mapping.</strong> For each processor, show how its data maps to every ledger field, and flag any gaps. Known gaps to plan around: Kajabi gives no failed payments, no refund or dispute events, and no card details; Commas' history has no date filter and no payment method; only Whop gives card last 4 on every payment. Confirm whether Kajabi takes payments through Kajabi Payments or ACTA's own Stripe or PayPal, because failure and card detail may have to come from there.</li>
     <li><strong>Payer details.</strong> Confirm whether each processor gives name, email and phone on every payment. Where one doesn't, say how missing details will be collected when a new contact is created.</li>
     <li><strong>Product mapping.</strong> List every product name on every processor with its proposed category.</li>
@@ -291,13 +291,23 @@
   </ol>
   <div class="flag"><span class="lab">Checkpoint 4</span><p>Send the test results.</p></div>
 
-  <h3>Phase 6 · Clean up and keep it honest</h3>
+  <h3>Phase 6 · Keep it honest</h3>
   <ol>
-    <li>Confirm no workflow uses the six old payment fields, then delete them.</li>
     <li>Set up a daily automatic check that pulls the previous day's transactions from each processor and compares them with the ledger. It adds anything missing, such as a missed event or a Kajabi refund, and alerts on any difference it can't resolve. The same daily report lists every new manual entry (who, amount, reference) for a manager to verify against the bank.</li>
     <li>Write a one-page guide for reps on recording a manual payment, and on when not to.</li>
   </ol>
-  <div class="flag"><span class="lab">Final report</span><p>Send the deleted fields, the first three daily check results, the rep guide and the location of the failure log.</p></div>
+  <div class="flag"><span class="lab">Checkpoint 5</span><p>Send the first three daily check results, the rep guide and the location of the failure log.</p></div>
+
+  <h3>Phase 7 · Check the old data, then delete it (final step)</h3>
+  <ol>
+    <li><strong>Compare old against new.</strong> For every contact with data in the old <code>Revenue</code> or <code>Payment Date</code> fields, compare it with their new ledger, after converting the old values' mixed cents and dollars.
+      <ul>
+        <li>The ledger shows <strong>more</strong> than the old fields: expected and fine. The new setup captures more.</li>
+        <li>The old fields show a payment the ledger <strong>doesn't</strong> have: a probable missed payment. Investigate each one, find it in the processors or confirm it's an error in the old data, and list it.</li>
+      </ul></li>
+    <li>Once Tommy has approved every gap, clear the data from the six old fields, confirm no workflow uses them, then delete the fields themselves.</li>
+  </ol>
+  <div class="flag"><span class="lab">Final report</span><p>Send the old-vs-new comparison (contacts checked, where the ledger has more, every gap and how it was resolved) before deleting anything. Then confirm the fields are deleted.</p></div>
 </section>
 
 <div class="part"><span class="part-n">Scope</span><h2>Done means</h2></div>
@@ -311,7 +321,7 @@
 </section>
 
 <footer>
-  ACTA Football · Payments Integration Spec · v2.0 · current state read from the live CRM, 2 October 2026; processor capabilities from each processor's public API documentation
+  ACTA Football · Payments Integration Spec · v2.1 · current state read from the live CRM, 2 October 2026; processor capabilities from each processor's public API documentation
 </footer>
 
 </div>
